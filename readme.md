@@ -9,11 +9,11 @@ If u are an extern person you can look at the Ip adress on the device, make sure
 ## Sparringspartner
 Kato Borms
 ## Inhoud
-# Starting with Fritzing
+### Starting with Fritzing
 I'm going to start with my fritzing scheme, I made a scheme on paper to see if I connected something wrong, now it is easier to digitalise. I wrote down the types
 of my sensors and other components so I can look them up in fritzing. I am waiting for approval.
 
-# Doing my database in the meantime
+### Doing my database in the meantime
 In the meantime I made a ERD scheme for my database. The tables are made, now just fill them up with dummy data. I opened an excel to list the dummy data easily and filled it in my tables.
   
 ## Instructables
