@@ -1,20 +1,27 @@
 # Project One - Alco-CarLock
 
-**De inhoud van dit document schrijf je volledig in het Engels**
+My project this year is an alcohol lock for in the car. It is a safety for people who drink and drive to much. I'm going to let the driver blow in to the sensor and see if he drank to much. If so, the car won't start for at least 3h. You have to identify yourself with a badge to see who wants to drive and it can' be manipulated by someone else. The temperature will be measured while the driver blows, that is not necessary but I'm going to use the data to see if there is a connection between alcohol usage and the temperature. There will be a dc motor to test and show the result of my project but it is the meaning to implement it in to a car. 
 
-Omschrijf het project. Doe dit in het markdown formaat.
-- [Syntax md](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
+If u are an extern person you can look at the Ip adress on the device, make sure you're connected to the same network and lookup the ip address in your browser.
 
-Hoe kan een externe persoon (die niets weet over de "ProjectOne" opdracht) het project snel runnen op de eigen pc?
-Op github vind je verschillende voorbeelden hoe je een readme.md bestand kan structureren.
-- [Voorbeeld 1](https://github.com/othneildrew/Best-README-Template)
-- [Voorbeeld 2](https://github.com/tsungtwu/flask-example/blob/master/README.md)
-- [Voorbeeld 3](https://github.com/twbs/bootstrap/blob/main/README.md)
-- [Voorbeeld 4](https://www.makeareadme.com/)
+
 
 ## Sparringspartner
 Kato Borms
 ## Inhoud
+# Starting with Fritzing
+I'm going to start with my fritzing scheme, I made a scheme on paper to see if I connected something wrong, now it is easier to digitalise. I wrote down the types
+of my sensors and other components so I can look them up in fritzing. I am waiting for approval.
+
+# Doing my database in the meantime
+In the meantime I made a ERD scheme for my database. The tables are made, now just fill them up with dummy data. I opened an excel to list the dummy data easily and filled it in my tables.
+  
+## Instructables
+Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
+
+
+
+# Voor mezelf om te onthouden:
 Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
 
 - Wat is de structuur van het project?
@@ -22,6 +29,8 @@ Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt ze
 - Moeten er settings worden veranderd in de backend code voor de database? 
 - Runt de back- en front-end code direct? Of moeten er nog commando's worden ingegeven?
 - Zijn er poorten die extra aandacht vereisen in de back- en/of front-end code?
-  
-## Instructables
-Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
+Op github vind je verschillende voorbeelden hoe je een readme.md bestand kan structureren.
+- [Voorbeeld 1](https://github.com/othneildrew/Best-README-Template)
+- [Voorbeeld 2](https://github.com/tsungtwu/flask-example/blob/master/README.md)
+- [Voorbeeld 3](https://github.com/twbs/bootstrap/blob/main/README.md)
+- [Voorbeeld 4](https://www.makeareadme.com/)
