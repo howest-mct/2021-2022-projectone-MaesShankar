@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Drink Water</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet" />
+    
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+        integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+        crossorigin="anonymous"></script>
+    <script src="script/dataHandler.js"></script>
+    <script src="script/tabel.js"></script>
+</head>
+
+<body class="u-max-width-page">
+    <header class="o-row o-row--md">
+        <div class="o-container o-layout o-layout--align-center">
+            <div class="c-header o-layout">
+                <div class="o-layout--item u-1-of-3-bp3">
+                    <div class="c-header_logo">
+                        <h1 class="c-logo">
+                            Alco-CarLock
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="o-layout__item u-1-of-3-bp3">
+                    <div class="c-header__nav c-header__nav--main">
+                        <nav class="c-nav">
+                            <ul class="o-list c-nav__list">
+                                <li class="c-nav__item is-selected"><a href="#!" class="c-nav__link " id="history">History</a></li>
+                                <li class="c-nav__item"><a href="#!" class="c-nav__link">Lock Device</a></li>
+                                <li class="c-nav__item"><a href="#!" class="c-nav__link">Users</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                
+                <div class="c-header__mobile-nav-trigger">
+                    <button class="o-button-reset c-nav-trigger js-toggle-nav">
+                        <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+    <section class="o-row">
+        <div class="c-container">
+                <div id="history" class="o-layout o-layout--gutter-sm o-layout--align-center">
+                    <div class="o-layout__item">
+                    <h3 class="u-color--dark">Historiek</h3>
+                            <table name="Historiek">
+                                <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                    <th class="c-cell">HistoriekID</th>
+                                    <th class="c-cell">DeviceID</th>
+                                    <th class="c-cell">ActieID</th>
+                                    <th class="c-cell">Datum</th>
+                                    <th class="c-cell">Waarde</th>
+                                    <th class="c-cell">Commentaar</th>
+                                </tr>
+                                <tr class="c-row u-table js-table o-layout__item o-layout--gutter-lg">
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    </section>
+                
+</body>
+
+</html>
