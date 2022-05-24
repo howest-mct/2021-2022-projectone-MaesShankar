@@ -10,15 +10,28 @@ from repositories.DataRepository import DataRepository
 
 from selenium import webdriver
 
+sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 
 
 
-# Code voor Hardware
+# # Code voor Hardware
 def setup_gpio():
     pass
 
+def onewire():
+    global sensor_file
+    sensor_file = open(sensor_file_name,'r')
+    line = sensor_file.readlines()[-1]
+    uitkomst = line[line.rfind("t"):]
+    geheel = uitkomst[2:]
+    temperatuur = 'De temperatuur is ' + geheel[:2] + ',' + geheel[2:]+'°Celsius'
+    sensor_file.close
+    testuren=geheel[:2] + ',' + geheel[3:]
+    print(f'onewire {testuren}')
+    time.sleep(1)
+    return testuren
 
 # Code voor Flask
 
@@ -52,6 +65,14 @@ def read_history():
 def initial_connection():
     print('A new client connect')
     # # Send to the client!
+    waarde=onewire()
+    print(waarde)
+    emit('B2F_connected', {'temperatuur': f'{waarde}'})
+
+@socketio.on('AskTemp')
+def Temperatuur():
+    temperatuur=onewire()
+    emit('TempData', {'temperatuur': f'{temperatuur}'})
 
 def start_chrome_kiosk():
     import os
@@ -94,10 +115,10 @@ def start_chrome_thread():
 
 if __name__ == '__main__':
     try:
-        setup_gpio()
+        # setup_gpio()
         start_chrome_thread()
         print("**** Starting APP ****")
-        socketio.run(app, debug=True, host='0.0.0.0')
+        socketio.run(app, debug=False, host='0.0.0.0',port=5000)
     except KeyboardInterrupt:
         print ('KeyboardInterrupt exception is caught')
     finally:
