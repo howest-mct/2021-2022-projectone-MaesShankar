@@ -445,15 +445,30 @@ a:focus {
     ---
     Main header of the website
 */
+.c-temperatuur{
+    font-size:43px;
+    color: #202024;
+}
 .c-cell{
     color:#5051db;
+    font-weight: bold;
+   
 }
 .c-cell_second{
+    font-weight: normal;
     color: #3385ff;
+
+    border:#000 0.5px solid;
+}
+.c-cell_second_special{
+    font-weight: normal;
+    color: #3385ff;
+    width: 120px;
+    border:#000 0.5px solid;
 }
 .c-logo {
-    height: 32.5px;
-    display: flex;
+    height: 35px;
+    display:flex;
     align-items: center;
 }
 
@@ -645,9 +660,11 @@ a:focus {
     Utility classes to put specific margins and paddings onto elements
 */
 table, th, td{
-    border: 1px solid;
-    width: 50%;
+    border: 2px solid;
+    width: 100%;
+    border-width: medium;
 }
+
 .u-container_design{
     border-radius: 1px;
     border-color: #000;

@@ -6,6 +6,7 @@ const handleData = function (
   method = 'GET',
   body = null
 ) {
+  
   fetch(url, {
     method: method,
     body: body,
