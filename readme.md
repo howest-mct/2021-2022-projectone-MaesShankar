@@ -18,12 +18,11 @@ Got approval with following changes:
 - MQ3 component is not drawn well
 - Bit cleaner
 
-
 ### Doing my database in the meantime
 In the meantime I made a ERD scheme for my database. The tables are made, now just fill them up with dummy data. I opened an excel to list the dummy data easily and filled it in my tables. While I tried to dump my file to show it to my teachers I saw that I got an error. So I read the error and it seemed like the version of my dump.exe file was less recent then my server version so I changed the path to a newer version of the dump.exe that I downloaded online.
 ### Website with connection to database
 I made a small boilerplate where I'm going to send my history tabel, I'm trying to make connection but there is a problem with my endpoint.
-
+It got fixed, now I managed to get my history on the web and I got live data from my temperature sensor.
 ## Instructables
 Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
 
