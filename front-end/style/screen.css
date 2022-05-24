@@ -189,7 +189,10 @@ a:focus {
     padding-top: 48px;
     padding-bottom: 24px;
 }
-
+.o-row--md {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
 .o-row--xl {
     padding-top: 72px;
     padding-bottom: 48px;
@@ -197,6 +200,12 @@ a:focus {
 
 .o-row--dark {
     background-color: #20223a;
+}
+@media (min-width: 576px) {
+.o-row {
+        padding-left: 36px;
+        padding-right: 36px;
+    }
 }
 
 @media (min-width: 768px) {
@@ -206,7 +215,7 @@ a:focus {
     }
 
     .o-row--md {
-        padding-top: 48px;
+        padding-top: 24px;
         padding-bottom: 24px;
     }
 
@@ -468,6 +477,8 @@ a:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-color: #20223a;
+
 }
 
 .c-header__nav {
@@ -491,7 +502,6 @@ a:focus {
         display: none;
     }
 }
-
 /*
     Component: Nav
     ---
@@ -637,6 +647,11 @@ a:focus {
 table, th, td{
     border: 1px solid;
     width: 50%;
+}
+.u-container_design{
+    border-radius: 1px;
+    border-color: #000;
+    color: #3385ff;
 }
 .u-color-XXX-light {
     color: white;

@@ -24,8 +24,7 @@ def setup_gpio():
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'geheim!'
-socketio = SocketIO(app, cors_allowed_origins="*", logger=False,
-                    engineio_logger=False, ping_timeout=1)
+socketio = SocketIO(app, cors_allowed_origins="*", logger=False,engineio_logger=False, ping_timeout=1)
 
 CORS(app)
 

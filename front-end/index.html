@@ -4,22 +4,22 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Drink Water</title>
+    <title>Project One</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
+
     <link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
     <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet" />
-    
+    <link rel="manifest" href="./style/manifest.json">
     <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
         integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
         crossorigin="anonymous"></script>
     <script src="script/dataHandler.js"></script>
-    <script src="script/tabel.js"></script>
+    <script src="script/app.js"></script>
 </head>
 
 <body class="u-max-width-page">
     <header class="o-row o-row--md">
-        <div class="o-container o-layout o-layout--align-center">
+        <div class="o-container o-layout o-layout--align-center ">
             <div class="c-header o-layout">
                 <div class="o-layout--item u-1-of-3-bp3">
                     <div class="c-header_logo">
@@ -33,14 +33,15 @@
                     <div class="c-header__nav c-header__nav--main">
                         <nav class="c-nav">
                             <ul class="o-list c-nav__list">
-                                <li class="c-nav__item is-selected"><a href="#!" class="c-nav__link " id="history">History</a></li>
-                                <li class="c-nav__item"><a href="#!" class="c-nav__link">Lock Device</a></li>
-                                <li class="c-nav__item"><a href="#!" class="c-nav__link">Users</a></li>
+                                <li class="c-nav__item is-selected">
+                                    <a href="#History" class="c-nav__link ">History</a></li>
+                                <li class="c-nav__item"><a href="#LockDevice" class="c-nav__link">Lock Device</a></li>
+                                <li class="c-nav__item"><a href="#Users" class="c-nav__link">Users</a></li>
                             </ul>
                         </nav>
                     </div>
                 </div>
-                
+
                 <div class="c-header__mobile-nav-trigger">
                     <button class="o-button-reset c-nav-trigger js-toggle-nav">
                         <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -52,34 +53,62 @@
             </div>
         </div>
     </header>
-    <section class="o-row">
-        <div class="c-container">
-                <div id="history" class="o-layout o-layout--gutter-sm o-layout--align-center">
-                    <div class="o-layout__item">
-                    <h3 class="u-color--dark">Historiek</h3>
-                            <table name="Historiek">
-                                <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                    <th class="c-cell">HistoriekID</th>
-                                    <th class="c-cell">DeviceID</th>
-                                    <th class="c-cell">ActieID</th>
-                                    <th class="c-cell">Datum</th>
-                                    <th class="c-cell">Waarde</th>
-                                    <th class="c-cell">Commentaar</th>
-                                </tr>
-                                <tr class="c-row u-table js-table o-layout__item o-layout--gutter-lg">
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <section class="o-row o-row--md u-max-width-sm">
+        <div class="o-layout__item">
+            <h2 class="js-name u-color--dark">Welcome {Name}</h2>
+        </div>
     </section>
-                
+    <section class="o-row o-row--md u-max-width-lg">
+        <div class="c-container">
+            <div class="o-section o-section-lg">
+
+            
+            <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
+                <div class="o-layout__item">
+                    <h3 id="History" class="u-color--dark">Historiek</h3>
+
+                    <table name="Historiek">
+                        <tr class="c-row o-layout__item o-layout--gutter-lg">
+                            <th class="c-cell">HistoriekID</th>
+                            <th class="c-cell">DeviceID</th>
+                            <th class="c-cell">ActieID</th>
+                            <th class="c-cell">Datum</th>
+                            <th class="c-cell">Waarde</th>
+                            <th class="c-cell">Commentaar</th>
+                        </tr>
+                        <tr class="c-row u-table js-table o-layout__item o-layout--gutter-lg">
+                            <td class="c-cell_second">Data</td>
+                            <td class="c-cell_second">Data</td>
+                            <td class="c-cell_second">Data</td>
+                            <td class="c-cell_second">Data</td>
+                            <td class="c-cell_second">Data</td>
+                            <td class="c-cell_second">Data</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+        </div>
+    </section>
+    <section class="o-row o-row--md u-max-width-md">
+        <div class="o-container">
+            <div class="o-layout o-layout--gutter-sm o-layout--align-center">
+                <div class="o-layout__item" id="LockDevice">
+                    <h3 class="js-name u-color--dark">Lock Device</h3>
+                </div>
+            
+                <div class="o-layout__item u-1-of-3-bp1">
+                    <button class="js-lock u-button" data-locktime="3">Lock 3H</button>
+                </div>
+                <div class="o-layout__item u-1-of-3-bp1">
+                    <button class="js-lock u-button" data-locktime="6">Lock 6H</button>
+                </div>
+                <div class="o-layout__item u-1-of-3-bp1">
+                    <button class="js-lock u-button" data-locktime="0">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
