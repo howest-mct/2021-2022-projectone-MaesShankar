@@ -449,7 +449,7 @@ a:focus {
     font-size:43px;
     color: #202024;
 }
-.c-cell{
+/* .c-cell{
     color:#5051db;
     font-weight: bold;
    
@@ -465,7 +465,7 @@ a:focus {
     color: #3385ff;
     width: 120px;
     border:#000 0.5px solid;
-}
+} */
 .c-logo {
     height: 35px;
     display:flex;
@@ -659,12 +659,26 @@ a:focus {
     ---
     Utility classes to put specific margins and paddings onto elements
 */
-table, th, td{
-    border: 2px solid;
-    width: 100%;
-    border-width: medium;
+table{
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
-
+thead tr{
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+th,tr{
+    padding: 12px 15px;
+}
+tbody tr{
+    border-bottom: 1px solid #dddddd;
+}
+tb
 .u-container_design{
     border-radius: 1px;
     border-color: #000;

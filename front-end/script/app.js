@@ -11,6 +11,11 @@ const getHistory = function () {
   handleData(url, fill_table,error_get);
 };
 
+const getUsers = function () {
+  const url = lanIP + '/api/v1/users/';
+  console.log(url)
+  handleData(url, fill_table_users,error_get);
+};
 // Show
 const error_get=function(){
   let htmlString=`  <td class="c-cell_second">Error</td>
@@ -22,15 +27,8 @@ const error_get=function(){
   document.querySelector('.js-table').innerHTML=htmlString
 }
 const fill_table=function(jsonObject){
-    console.log(jsonObject)
-    let htmlString=`<tr class="c-row o-layout__item o-layout--gutter-lg">
-                            <th class="c-cell">HistoriekID</th>
-                            <th class="c-cell">DeviceID</th>
-                            <th class="c-cell">ActieID</th>
-                            <th class="c-cell">Datum</th>
-                            <th class="c-cell">Waarde</th>
-                            <th class="c-cell">Commentaar</th>
-                      </tr>`;
+    // console.log(jsonObject)
+    let htmlString=``;
     for(let data of jsonObject){
         console.log(data)
         htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
@@ -40,12 +38,23 @@ const fill_table=function(jsonObject){
         <td class="c-cell_second_special">${data.Datum}</td>
         <td class="c-cell_second">${data.Waarde}</td>;   
         <td class="c-cell_second">${data.Commentaar}</td>
-      </tr>`
+      </tr>`;
     }
     document.querySelector('.js-table').innerHTML=htmlString
+    getUsers()
+}
+const fill_table_users=function(jsonObject){
+    let htmlString=''
+    for(let data of jsonObject){
+      htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+        <td class="c-cell_second">${data.UserID}</td>
+        <td class="c-cell_second">${data.Naam}</td>
+        <td class="c-cell_second">${data.Voornaam}</td>
+      </tr>`
+    }
+    document.querySelector('.js-table-users').innerHTML=htmlString;
     listenToLockbuttons()
 }
-
 //Event listner
 const listenToLockbuttons = function () {
   const buttons = document.querySelectorAll('.js-lock');
@@ -53,6 +62,7 @@ const listenToLockbuttons = function () {
     b.addEventListener('click', function () {
       const locktime= b.getAttribute('data-locktime')
       console.log(`locktime: ${locktime}`)
+      socketio.emit('F2B_locktime', locktime);
     });
   }
 };
@@ -75,15 +85,15 @@ const listenToSocket = function () {
   });
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)
-    socketio.emit('AskTemp');
+    
   });
 };
 
 
 const init = function () {
     getHistory()
-    listenToSocket();
     
+    listenToSocket();
 };
 
 document.addEventListener('DOMContentLoaded', function () {

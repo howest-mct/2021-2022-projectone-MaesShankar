@@ -61,12 +61,18 @@ def read_history():
     result = DataRepository.read_history()
     return jsonify(result)
 
+@app.route('/api/v1/users/', methods=['GET'])
+def read_users():
+    print('Get users')
+    result = DataRepository.read_users()
+    return jsonify(result)
+
+#SocketIO
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
     # # Send to the client!
     waarde=onewire()
-    print(waarde)
     emit('B2F_connected', {'temperatuur': f'{waarde}'})
 
 @socketio.on('AskTemp')
@@ -74,6 +80,11 @@ def Temperatuur():
     temperatuur=onewire()
     emit('TempData', {'temperatuur': f'{temperatuur}'})
 
+@socketio.on('F2B_locktime')
+def LockTime(time):
+    print(f'tijd {time}')
+
+#ChromeThread
 def start_chrome_kiosk():
     import os
 

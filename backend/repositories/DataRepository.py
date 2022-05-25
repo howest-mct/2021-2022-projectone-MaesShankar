@@ -12,5 +12,9 @@ class DataRepository:
 
     @staticmethod
     def read_history():
-        sql = "SELECT * from Historiek ORDER BY datum DESC"
+        sql = "SELECT * from Historiek ORDER BY datum ASC"
+        return Database.get_rows(sql)
+    @staticmethod
+    def read_users():
+        sql="SELECT * FROM Users ORDER BY UserID DESC"
         return Database.get_rows(sql)

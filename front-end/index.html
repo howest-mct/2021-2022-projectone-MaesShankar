@@ -143,25 +143,36 @@
             <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
                 <div class="o-layout__item">
                     <h3 id="History" class="u-color--dark">Historiek</h3>
-
-                    <table name="Historiek" class="js-table">
-                        <tr class="c-row o-layout__item o-layout--gutter-lg">
-                            <th class="c-cell">HistoriekID</th>
-                            <th class="c-cell">DeviceID</th>
-                            <th class="c-cell">ActieID</th>
-                            <th class="c-cell">Datum</th>
-                            <th class="c-cell">Waarde</th>
-                            <th class="c-cell">Commentaar</th>
-                        </tr>
-                        <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                            <td class="c-cell_second">Data</td>
-                            <td class="c-cell_second">Data</td>
-                            <td class="c-cell_second">Data</td>
-                            <td class="c-cell_second">Data</td>
-                            <td class="c-cell_second">Data</td>
-                            <td class="c-cell_second">Data</td>
-                        </tr>
-                    </table>
+                    <!-- <div class="o-layout--gutter-sm o-layout--align-center">
+                        <div class="o-layout__item u-1-of-2-bp3">
+                            <button class="u-button">AlcoholHistoriek</button>
+                        </div>
+                        <div class="o-layout__item u-1-of-2-bp3">
+                            <button class="u-button">Historiek</button>
+                        </div>
+                    </div> -->
+                    <table name="Historiek" >
+                            <thead class="js-table-head">
+                                <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                    <th class="c-cell">HistoriekID</th>
+                                    <th class="c-cell">DeviceID</th>
+                                    <th class="c-cell">ActieID</th>
+                                    <th class="c-cell">Datum</th>
+                                    <th class="c-cell">Waarde</th>
+                                    <th class="c-cell">Commentaar</th>
+                                </tr>
+                            </thead>
+                            <tbody class="js-table">
+                                <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                </tr>
+                            </tbody>
+                        </table>
                 </div>
             </div>
             </div>
@@ -182,6 +193,31 @@
                 </div>
                 <div class="o-layout__item u-1-of-3-bp1">
                     <button class="js-lock u-button" data-locktime="0">Unlock</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="o-row o-row--md u-max-width-md">
+        <div class="o-container">
+            <div class="o-layout o-layout--gutter-sm o-layout--align-center">
+                <div class="o-layout__item">
+                    <h3 id="Users" class="u-color--dark">Users</h3>
+                    <table name="Users">
+                        <thead class="js-table-head">
+                            <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                <th class="c-cell">UserID</th>
+                                <th class="c-cell">Naam</th>
+                                <th class="c-cell">Voornaam</th>
+                            </tr>
+                        </thead>
+                        <tbody class="js-table-users">
+                            <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+                                <td class="c-cell_second">Data</td>
+                                <td class="c-cell_second">Data</td>
+                                <td class="c-cell_second">Data</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
