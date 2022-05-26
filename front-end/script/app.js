@@ -91,8 +91,7 @@ const listenToSocket = function () {
 
 
 const init = function () {
-    getHistory()
-    
+    getHistory()    
     listenToSocket();
 };
 

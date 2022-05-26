@@ -16,5 +16,10 @@ class DataRepository:
         return Database.get_rows(sql)
     @staticmethod
     def read_users():
-        sql="SELECT * FROM Users ORDER BY UserID DESC"
+        sql="SELECT * FROM Users ORDER BY UserID ASC"
         return Database.get_rows(sql)
+    @staticmethod
+    def create_log(DeviceID,ActieID,Datum,Waarde,Commentaar):
+        sql = "INSERT INTO Historiek(DeviceID,ActieID,Datum,Waarde,Commentaar) Values(%s,%s,%s,%s,%s);"
+        params = [DeviceID,ActieID,Datum,Waarde,Commentaar]
+        return Database.execute_sql(sql, params)
