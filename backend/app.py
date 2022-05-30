@@ -47,7 +47,7 @@ def onewire():
     testuren=geheel[:2] + ',' + geheel[3:]
     print(f'onewire {testuren}')
     time.sleep(1)
-    emit('TempData', {'temperatuur': f'{testuren}'})
+    socketio.emit('TempData', {'temperatuur': f'{12}'},broadcast=True)
 
 # API ENDPOINTS
 
