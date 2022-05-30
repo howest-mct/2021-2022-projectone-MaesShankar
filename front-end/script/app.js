@@ -75,7 +75,6 @@ const listenToSocket = function () {
   });
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)
-    socketio.emit('AskTemp');
   });
 };
 

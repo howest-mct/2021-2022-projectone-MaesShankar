@@ -31,7 +31,8 @@ def onewire():
     testuren=geheel[:2] + ',' + geheel[3:]
     print(f'onewire {testuren}')
     time.sleep(1)
-    return testuren
+    emit('TempData', {'temperatuur': f'{testuren}'})
+    
 
 # Code voor Flask
 
@@ -69,10 +70,6 @@ def initial_connection():
     print(waarde)
     emit('B2F_connected', {'temperatuur': f'{waarde}'})
 
-@socketio.on('AskTemp')
-def Temperatuur():
-    temperatuur=onewire()
-    emit('TempData', {'temperatuur': f'{temperatuur}'})
 
 def start_chrome_kiosk():
     import os
@@ -108,6 +105,10 @@ def start_chrome_thread():
     chromeThread = threading.Thread(target=start_chrome_kiosk, args=(), daemon=True)
     chromeThread.start()
 
+def start_Temp_Thread():
+    print("**** Starting CHROME ****")
+    tempThread = threading.Thread(target=onewire, args=(), daemon=True)
+    tempThread.start()
 
 
 # ANDERE FUNCTIES
@@ -116,7 +117,9 @@ def start_chrome_thread():
 if __name__ == '__main__':
     try:
         # setup_gpio()
+        print("**** Starting Thread ****")
         start_chrome_thread()
+        start_Temp_Thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0',port=5000)
     except KeyboardInterrupt:
