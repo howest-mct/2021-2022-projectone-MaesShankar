@@ -1,6 +1,6 @@
 'use strict';
 
-const lanIP = `http://${window.location.hostname}:5000`;
+const lanIP = `http:/${window.location.hostname}:5000`;
 console.log(lanIP)
 const socketio = io(`${lanIP}`);
 // Get
@@ -71,7 +71,6 @@ const listenToSocket = function () {
   socketio.on('B2F_connected', function (parameter) {
     console.log(`Het is ${parameter.temperatuur} °C`);
     ShowTemperatuur(parameter.temperatuur)
-    socketio.emit('AskTemp');
   });
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)

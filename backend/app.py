@@ -16,6 +16,22 @@ sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 
 
 
+
+    
+
+# Code voor Flask
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'geheim!'
+socketio = SocketIO(app, cors_allowed_origins="*", logger=False,engineio_logger=False, ping_timeout=1)
+
+CORS(app)
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    print(e)
+
 # # Code voor Hardware
 def setup_gpio():
     pass
@@ -32,22 +48,6 @@ def onewire():
     print(f'onewire {testuren}')
     time.sleep(1)
     emit('TempData', {'temperatuur': f'{testuren}'})
-    
-
-# Code voor Flask
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'geheim!'
-socketio = SocketIO(app, cors_allowed_origins="*", logger=False,engineio_logger=False, ping_timeout=1)
-
-CORS(app)
-
-
-@socketio.on_error()        # Handles the default namespace
-def error_handler(e):
-    print(e)
-
-
 
 # API ENDPOINTS
 
@@ -66,9 +66,9 @@ def read_history():
 def initial_connection():
     print('A new client connect')
     # # Send to the client!
-    waarde=onewire()
-    print(waarde)
-    emit('B2F_connected', {'temperatuur': f'{waarde}'})
+    onewire()
+    
+    
 
 
 def start_chrome_kiosk():
@@ -106,7 +106,7 @@ def start_chrome_thread():
     chromeThread.start()
 
 def start_Temp_Thread():
-    print("**** Starting CHROME ****")
+    print("**** Starting TEMP ****")
     tempThread = threading.Thread(target=onewire, args=(), daemon=True)
     tempThread.start()
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         # setup_gpio()
         print("**** Starting Thread ****")
         start_chrome_thread()
-        start_Temp_Thread()
+        # start_Temp_Thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0',port=5000)
     except KeyboardInterrupt:
