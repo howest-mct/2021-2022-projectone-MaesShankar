@@ -76,23 +76,26 @@ def setup_gpio():
     GPIO.setup(relais, GPIO.OUT)
 
 def onewire():
-    global sensor_file
-    sensor_file = open(sensor_file_name,'r')
-    line = sensor_file.readlines()[-1]
-    uitkomst = line[line.rfind("t"):]
-    geheel = uitkomst[2:]
-    sensor_file.close
-    testuren=geheel[:2] + ',' + geheel[3:]
-    data=geheel[:2] + '.' + geheel[3:]
-    # print(f'onewire {testuren}')
-    time.sleep(1)
-    DeviceID=2
-    ActieID=3
-    Datum=datetime.now()
-    Waarde=float(data)
-    Commentaar='Temperatuursmeting'
-    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-    return testuren
+    while True:
+        global sensor_file
+        sensor_file = open(sensor_file_name,'r')
+        line = sensor_file.readlines()[-1]
+        uitkomst = line[line.rfind("t"):]
+        geheel = uitkomst[2:]
+        sensor_file.close
+        testuren=geheel[:2] + ',' + geheel[3:]
+        data=geheel[:2] + '.' + geheel[3:]
+        # print(f'onewire {testuren}')
+        time.sleep(1)
+        DeviceID=2
+        ActieID=3
+        Datum=datetime.now()
+        Waarde=float(data)
+        Commentaar='Temperatuursmeting'
+        DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+        # return testuren
+        print(testuren)
+        emit('TempData', {'temperatuur': f'{testuren}'})
 
 def contactor(time):
     if time == '3' or time == '6':
@@ -142,10 +145,10 @@ def initial_connection():
     waarde=onewire()
     emit('B2F_connected', {'temperatuur': f'{waarde}'})
 
-@socketio.on('AskTemp')
-def Temperatuur():
-    temperatuur=onewire()
-    emit('TempData', {'temperatuur': f'{temperatuur}'})
+# @socketio.on('AskTemp')
+# def Temperatuur():
+#     temperatuur=onewire()
+#     emit('TempData', {'temperatuur': f'{temperatuur}'})
 
 @socketio.on('F2B_locktime')
 def LockTime(time):
@@ -187,6 +190,11 @@ def start_chrome_thread():
     chromeThread = threading.Thread(target=start_chrome_kiosk, args=(), daemon=True)
     chromeThread.start()
 
+def start_temp_thread():
+    print("**** Starting TEMP ****")
+    Thread = threading.Thread(target=onewire, args=(), daemon=True)
+    Thread.start()
+
 
 
 # ANDERE FUNCTIES
@@ -208,6 +216,7 @@ if __name__ == '__main__':
         lcd_string(ip,LCD_LINE_2)
         # setup_gpio()
         start_chrome_thread()
+        start_temp_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0',port=5000)
     except KeyboardInterrupt:
