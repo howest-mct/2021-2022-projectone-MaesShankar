@@ -30,7 +30,7 @@ const fill_table=function(jsonObject){
     // console.log(jsonObject)
     let htmlString=``;
     for(let data of jsonObject){
-        console.log(data)
+        // console.log(data)
         htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
         <td class="c-cell_second">${data.HistoriekID}</td>
         <td class="c-cell_second">${data.DeviceID}</td>

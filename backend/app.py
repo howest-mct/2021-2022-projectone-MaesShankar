@@ -13,6 +13,7 @@ from datetime import datetime, date
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
+relais=24
 
 #LCD
 
@@ -71,7 +72,8 @@ def lcd_string(message,line):
 
 # Code voor Hardware
 def setup_gpio():
-    pass
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(relais, GPIO.OUT)
 
 def onewire():
     global sensor_file
@@ -91,6 +93,12 @@ def onewire():
     Commentaar='Temperatuursmeting'
     DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
     return testuren
+
+def contactor(time):
+    if time == '3' or time == '6':
+        GPIO.output(relais,GPIO.HIGH)
+    else:
+        GPIO.output(relais,GPIO.LOW)
 
 # Code voor Flask
 
@@ -142,6 +150,7 @@ def Temperatuur():
 @socketio.on('F2B_locktime')
 def LockTime(time):
     print(f'tijd {time}')
+    contactor(time)
 
 #ChromeThread
 def start_chrome_kiosk():
@@ -186,7 +195,7 @@ def start_chrome_thread():
 if __name__ == '__main__':
     setup_gpio()
     lcd_init()
-
+    GPIO.output(relais,GPIO.LOW)
     try:
         lcd_string("Welkom Bij",LCD_LINE_1)
         lcd_string("Alco-CarLock",LCD_LINE_2)
@@ -194,7 +203,7 @@ if __name__ == '__main__':
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
         ipfull=check_output(['ifconfig'])
-        ip=str(ipfull.decode(encoding='utf-8'))[978:991]
+        ip=str(ipfull.decode(encoding='utf-8'))[980:992]
         lcd_string("WIFI:",LCD_LINE_1)
         lcd_string(ip,LCD_LINE_2)
         # setup_gpio()
