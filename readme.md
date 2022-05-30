@@ -23,6 +23,12 @@ In the meantime I made a ERD scheme for my database. The tables are made, now ju
 ### Website with connection to database
 I made a small boilerplate where I'm going to send my history tabel, I'm trying to make connection but there is a problem with my endpoint.
 It got fixed, now I managed to get my history on the web and I got live data from my temperature sensor.
+
+I managed to write the data to my database.
+
+### LCD
+Now I managed to show some messages on my LCD. and my IP address.
+
 ## Instructables
 Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
 
