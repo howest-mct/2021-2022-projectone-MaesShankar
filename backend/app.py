@@ -203,7 +203,7 @@ if __name__ == '__main__':
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
         ipfull=check_output(['ifconfig'])
-        ip=str(ipfull.decode(encoding='utf-8'))[980:992]
+        ip=str(ipfull.decode(encoding='utf-8'))[980:995]
         lcd_string("WIFI:",LCD_LINE_1)
         lcd_string(ip,LCD_LINE_2)
         # setup_gpio()
