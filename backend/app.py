@@ -86,7 +86,14 @@ def MeetAlcohol(String):
         alcohol=klasse.read_channel(0)
         if alcohol>hoogstalcohol:
             hoogstalcohol=alcohol
-    
+        time.sleep(1)
+    DeviceID=1
+    ActieID=3
+    Datum=datetime.now()
+    Waarde=float(hoogstalcohol)
+    Commentaar='Alcoholmeting'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
 
 def Shutdown(String):
     pass
@@ -111,7 +118,7 @@ def setup_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(relais, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(stop, GPIO.OUTGPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(start,GPIO.RISING,MeetAlcohol, bouncetime=500)
     GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=500)
 

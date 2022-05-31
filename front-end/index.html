@@ -33,10 +33,10 @@
                     <div class="c-header__nav c-header__nav--main">
                         <nav class="c-nav">
                             <ul class="o-list c-nav__list">
-                                <li class="c-nav__item is-selected">
-                                    <a href="#History" class="c-nav__link ">History</a></li>
-                                <li class="c-nav__item"><a href="#LockDevice" class="c-nav__link">Lock Device</a></li>
-                                <li class="c-nav__item"><a href="#Users" class="c-nav__link">Users</a></li>
+                                <li class="c-nav__item is selected"><a href="index.html" class="c-nav__link">Lock Device</a></li>
+                                <li class="c-nav__item">
+                                    <a href="history.html" class="c-nav__link ">History</a></li>
+                                <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -56,7 +56,7 @@
     <section class="o-row o-row--md u-max-width-page">
         <div class="o-container o-layout o-layout--align-center o-layout--align-content-space-around">
 
-            <div class="o-layout__item u-1-of-2-bp3">
+            <div class="o-layout__item">
                 <h2 class="js-name u-color--dark">Welcome {Name}</h2>
         </div>
         <div class="o-layout__item u-1-of-2-bp3">
@@ -131,52 +131,12 @@
                     18°C
                 </div>
             </div>
-            
+        </div>
+        <div  class="o-layout__item u-1-of-2-bp3">
+            <h3>Alcoholpercentage:</h3>
+            <h3 class="js-alcoholpercentage">30 promille</h3>
         </div>
     </div>
-    </section>
-    <section class="o-row o-row--md u-max-width-page">
-        <div class="c-container">
-            <div class="o-section o-section-lg">
-
-            
-            <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
-                <div class="o-layout__item">
-                    <h3 id="History" class="u-color--dark">Historiek</h3>
-                    <!-- <div class="o-layout--gutter-sm o-layout--align-center">
-                        <div class="o-layout__item u-1-of-2-bp3">
-                            <button class="u-button">AlcoholHistoriek</button>
-                        </div>
-                        <div class="o-layout__item u-1-of-2-bp3">
-                            <button class="u-button">Historiek</button>
-                        </div>
-                    </div> -->
-                    <table name="Historiek" >
-                            <thead class="js-table-head">
-                                <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                    <th class="c-cell">HistoriekID</th>
-                                    <th class="c-cell">DeviceID</th>
-                                    <th class="c-cell">ActieID</th>
-                                    <th class="c-cell">Datum</th>
-                                    <th class="c-cell">Waarde</th>
-                                    <th class="c-cell">Commentaar</th>
-                                </tr>
-                            </thead>
-                            <tbody class="js-table">
-                                <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                </div>
-            </div>
-            </div>
-        </div>
     </section>
     <section class="o-row o-row--md u-max-width-md">
         <div class="o-container">
@@ -184,7 +144,7 @@
                 <div class="o-layout__item" id="LockDevice">
                     <h3 class="js-name u-color--dark">Lock Device</h3>
                 </div>
-            
+    
                 <div class="o-layout__item u-1-of-3-bp1">
                     <button class="js-lock u-button" data-locktime="3">Lock 3H</button>
                 </div>
@@ -193,31 +153,6 @@
                 </div>
                 <div class="o-layout__item u-1-of-3-bp1">
                     <button class="js-lock u-button" data-locktime="0">Unlock</button>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="o-row o-row--md u-max-width-md">
-        <div class="o-container">
-            <div class="o-layout o-layout--gutter-sm o-layout--align-center">
-                <div class="o-layout__item">
-                    <h3 id="Users" class="u-color--dark">Users</h3>
-                    <table name="Users">
-                        <thead class="js-table-head">
-                            <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                <th class="c-cell">UserID</th>
-                                <th class="c-cell">Naam</th>
-                                <th class="c-cell">Voornaam</th>
-                            </tr>
-                        </thead>
-                        <tbody class="js-table-users">
-                            <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                                <td class="c-cell_second">Data</td>
-                                <td class="c-cell_second">Data</td>
-                                <td class="c-cell_second">Data</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
