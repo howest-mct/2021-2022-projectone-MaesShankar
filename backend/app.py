@@ -10,11 +10,14 @@ from repositories.DataRepository import DataRepository
 from selenium import webdriver
 import smbus
 from datetime import datetime, date
+from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
-
+start=23
+stop=18
+klasse=MCPclass()
 #LCD
 
 I2C_ADDR  = 0x27 # I2C device address
@@ -35,6 +38,8 @@ E_PULSE = 0.0005
 E_DELAY = 0.0005
 
 bus = smbus.SMBus(1) # Rev 2 Pi uses 1
+
+
 
 def lcd_init():
   lcd_byte(0x33,LCD_CMD) # 110011 Initialise
@@ -69,11 +74,46 @@ def lcd_string(message,line):
   for i in range(LCD_WIDTH):
     lcd_byte(ord(message[i]),LCD_CHR)
 
+# Callbacks
+def MeetAlcohol(String):
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(3)
+    lcd_string("Blaas 5 seconden",LCD_LINE_1)
+    lcd_string("In de sensor",LCD_LINE_2)
+    hoogstalcohol=0
+    for i in range(0,6):
+        alcohol=klasse.read_channel(0)
+        if alcohol>hoogstalcohol:
+            hoogstalcohol=alcohol
+    
+
+def Shutdown(String):
+    pass
+
+
+# Code voor Flask
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'geheim!'
+socketio = SocketIO(app, cors_allowed_origins="*", logger=False,engineio_logger=False, ping_timeout=1)
+
+CORS(app)
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    print(e)
+
 
 # Code voor Hardware
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(relais, GPIO.OUT)
+    GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(stop, GPIO.OUTGPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(start,GPIO.RISING,MeetAlcohol, bouncetime=500)
+    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=500)
 
 def onewire():
     while True:
@@ -94,29 +134,14 @@ def onewire():
         Commentaar='Temperatuursmeting'
         DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
         # return testuren
-        print(testuren)
-        emit('TempData', {'temperatuur': f'{testuren}'})
+        print(Waarde)
+        socketio.emit('TempData', {'temperatuur': f'{Waarde}'})
 
 def contactor(time):
     if time == '3' or time == '6':
         GPIO.output(relais,GPIO.HIGH)
     else:
         GPIO.output(relais,GPIO.LOW)
-
-# Code voor Flask
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'geheim!'
-socketio = SocketIO(app, cors_allowed_origins="*", logger=False,engineio_logger=False, ping_timeout=1)
-
-CORS(app)
-
-
-@socketio.on_error()        # Handles the default namespace
-def error_handler(e):
-    print(e)
-
-
 
 # API ENDPOINTS
 
@@ -140,10 +165,7 @@ def read_users():
 #SocketIO
 @socketio.on('connect')
 def initial_connection():
-    print('A new client connect')
-    # # Send to the client!
-    waarde=onewire()
-    emit('B2F_connected', {'temperatuur': f'{waarde}'})
+    print('A new client connected')
 
 # @socketio.on('AskTemp')
 # def Temperatuur():
@@ -210,8 +232,8 @@ if __name__ == '__main__':
         time.sleep(3)
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
-        ipfull=check_output(['ifconfig'])
-        ip=str(ipfull.decode(encoding='utf-8'))[980:995]
+        ipfull=check_output(['hostname','--all-ip-addresses'])
+        ip=str(ipfull.decode(encoding='utf-8'))[16:31]
         lcd_string("WIFI:",LCD_LINE_1)
         lcd_string(ip,LCD_LINE_2)
         # setup_gpio()

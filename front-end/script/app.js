@@ -81,7 +81,7 @@ const listenToSocket = function () {
   socketio.on('B2F_connected', function (parameter) {
     console.log(`Het is ${parameter.temperatuur} °C`);
     ShowTemperatuur(parameter.temperatuur)
-    socketio.emit('AskTemp');
+    // socketio.emit('AskTemp');
   });
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)
