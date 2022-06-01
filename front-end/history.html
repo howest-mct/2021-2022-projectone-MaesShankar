@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Huis</title>
+    <link rel="stylesheet" href="style/screen.css" />
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
+        integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU"
+        crossorigin="anonymous"></script>
+    <script src="script/dataHandler.js"></script>
+    <script src="script/history.js"></script>
+</head>
+
+<body class="u-max-width-page">
+    <header class="o-row o-row--md">
+        <div class="o-container o-layout o-layout--align-center ">
+            <div class="c-header o-layout">
+                <div class="o-layout--item u-1-of-3-bp3">
+                    <div class="c-header_logo">
+                        <h1 class="c-logo">
+                            Alco-CarLock
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="o-layout__item u-1-of-3-bp3">
+                    <div class="c-header__nav c-header__nav--main">
+                        <nav class="c-nav">
+                            <ul class="o-list c-nav__list">
+                                <li class="c-nav__item "><a href="index.html" class="c-nav__link">Lock
+                                        Device</a></li>
+                                <li class="c-nav__item is selected">
+                                    <a href="history.html" class="c-nav__link ">History</a>
+                                </li>
+                                <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="c-header__mobile-nav-trigger">
+                    <button class="o-button-reset c-nav-trigger js-toggle-nav">
+                        <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                        </svg>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+    <section class="o-row o-row--md u-max-width-page">
+        <div class="c-container">
+            <div class="o-section o-section-lg">
+    
+    
+                <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
+                    <div class="o-layout__item">
+                        <h3 id="History" class="u-color--dark">Historiek</h3>
+                        <!-- <div class="o-layout--gutter-sm o-layout--align-center">
+                            <div class="o-layout__item u-1-of-2-bp3">
+                                <button class="u-button">AlcoholHistoriek</button>
+                            </div>
+                            <div class="o-layout__item u-1-of-2-bp3">
+                                <button class="u-button">Historiek</button>
+                            </div>
+                        </div> -->
+                        <table name="Historiek">
+                            <thead class="js-table-head">
+                                <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                    <th class="c-cell">HistoriekID</th>
+                                    <th class="c-cell">DeviceID</th>
+                                    <th class="c-cell">ActieID</th>
+                                    <th class="c-cell">Datum</th>
+                                    <th class="c-cell">Waarde</th>
+                                    <th class="c-cell">Commentaar</th>
+                                </tr>
+                            </thead>
+                            <tbody class="js-table">
+                                <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                    <td class="c-cell_second">Data</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>

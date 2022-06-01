@@ -10,11 +10,17 @@ from repositories.DataRepository import DataRepository
 from selenium import webdriver
 import smbus
 from datetime import datetime, date
+from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
+
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
-
+start=23
+stop=18
+klasse=MCPclass()
+ipfull=check_output(['hostname','--all-ip-addresses'])
+ip=str(ipfull.decode(encoding='utf-8'))[:14]
 #LCD
 
 I2C_ADDR  = 0x27 # I2C device address
@@ -35,6 +41,8 @@ E_PULSE = 0.0005
 E_DELAY = 0.0005
 
 bus = smbus.SMBus(1) # Rev 2 Pi uses 1
+
+
 
 def lcd_init():
   lcd_byte(0x33,LCD_CMD) # 110011 Initialise
@@ -68,37 +76,50 @@ def lcd_string(message,line):
   lcd_byte(line, LCD_CMD)
   for i in range(LCD_WIDTH):
     lcd_byte(ord(message[i]),LCD_CHR)
+def show_ip():
+    global ip
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(0.3)
+    lcd_string("WIFI:",LCD_LINE_1)
+    lcd_string(ip,LCD_LINE_2)
 
-
-# Code voor Hardware
-def setup_gpio():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(relais, GPIO.OUT)
-
-def onewire():
-    global sensor_file
-    sensor_file = open(sensor_file_name,'r')
-    line = sensor_file.readlines()[-1]
-    uitkomst = line[line.rfind("t"):]
-    geheel = uitkomst[2:]
-    sensor_file.close
-    testuren=geheel[:2] + ',' + geheel[3:]
-    data=geheel[:2] + '.' + geheel[3:]
-    # print(f'onewire {testuren}')
+# Callbacks
+def MeetAlcohol(String):
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
     time.sleep(1)
-    DeviceID=2
-    ActieID=3
-    Datum=datetime.now()
-    Waarde=float(data)
-    Commentaar='Temperatuursmeting'
-    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-    return testuren
+    lcd_string("Blaas 5 seconden",LCD_LINE_1)
+    lcd_string("In de sensor",LCD_LINE_2)
+    time.sleep(3)
+    hoogstalcohol=0
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    lcd_string("Blijven blazen!",LCD_LINE_1)
+    for i in range(0,6):
+        waarde=klasse.read_channel(0)
+        alcohol=round((waarde/1023)*100,2)
+        lcd_string(f"{i} s ; {alcohol}%",LCD_LINE_2)
+        if alcohol>hoogstalcohol:
+            hoogstalcohol=alcohol
+        time.sleep(1)
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
+    time.sleep(3)
+    # DeviceID=1
+    # ActieID=3
+    # Datum=datetime.now()
+    # Waarde=float(hoogstalcohol)
+    # Commentaar='Alcoholmeting'
+    # DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    # socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+    print(f"Resultaat: {hoogstalcohol}")
+    
 
-def contactor(time):
-    if time == '3' or time == '6':
-        GPIO.output(relais,GPIO.HIGH)
-    else:
-        GPIO.output(relais,GPIO.LOW)
+def Shutdown(String):
+    pass
+
 
 # Code voor Flask
 
@@ -113,6 +134,43 @@ CORS(app)
 def error_handler(e):
     print(e)
 
+
+# Code voor Hardware
+def setup_gpio():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(relais, GPIO.OUT)
+    GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(start,GPIO.RISING,MeetAlcohol, bouncetime=500)
+    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=500)
+
+def onewire():
+    while True:
+        global sensor_file
+        sensor_file = open(sensor_file_name,'r')
+        line = sensor_file.readlines()[-1]
+        uitkomst = line[line.rfind("t"):]
+        geheel = uitkomst[2:]
+        sensor_file.close
+        testuren=geheel[:2] + ',' + geheel[3:]
+        data=geheel[:2] + '.' + geheel[3:]
+        # print(f'onewire {testuren}')
+        time.sleep(1)
+        DeviceID=2
+        ActieID=3
+        Datum=datetime.now()
+        Waarde=float(data)
+        Commentaar='Temperatuursmeting'
+        DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+        # return testuren
+        print(Waarde)
+        socketio.emit('TempData', {'temperatuur': f'{Waarde}'})
+
+def contactor(time):
+    if time == '3' or time == '6':
+        GPIO.output(relais,GPIO.HIGH)
+    else:
+        GPIO.output(relais,GPIO.LOW)
 
 
 # API ENDPOINTS
@@ -137,15 +195,8 @@ def read_users():
 #SocketIO
 @socketio.on('connect')
 def initial_connection():
-    print('A new client connect')
-    # # Send to the client!
-    waarde=onewire()
-    emit('B2F_connected', {'temperatuur': f'{waarde}'})
+    print('A new client connected')
 
-@socketio.on('AskTemp')
-def Temperatuur():
-    temperatuur=onewire()
-    emit('TempData', {'temperatuur': f'{temperatuur}'})
 
 @socketio.on('F2B_locktime')
 def LockTime(time):
@@ -187,6 +238,11 @@ def start_chrome_thread():
     chromeThread = threading.Thread(target=start_chrome_kiosk, args=(), daemon=True)
     chromeThread.start()
 
+def start_temp_thread():
+    print("**** Starting TEMP ****")
+    Thread = threading.Thread(target=onewire, args=(), daemon=True)
+    Thread.start()
+
 
 
 # ANDERE FUNCTIES
@@ -200,14 +256,10 @@ if __name__ == '__main__':
         lcd_string("Welkom Bij",LCD_LINE_1)
         lcd_string("Alco-CarLock",LCD_LINE_2)
         time.sleep(3)
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        ipfull=check_output(['ifconfig'])
-        ip=str(ipfull.decode(encoding='utf-8'))[980:995]
-        lcd_string("WIFI:",LCD_LINE_1)
-        lcd_string(ip,LCD_LINE_2)
+        show_ip()
         # setup_gpio()
         start_chrome_thread()
+        start_temp_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0',port=5000)
     except KeyboardInterrupt:
