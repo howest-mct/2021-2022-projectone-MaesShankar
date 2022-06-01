@@ -13,11 +13,14 @@ from datetime import datetime, date
 from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
+
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
 start=23
 stop=18
 klasse=MCPclass()
+ipfull=check_output(['hostname','--all-ip-addresses'])
+ip=str(ipfull.decode(encoding='utf-8'))[:14]
 #LCD
 
 I2C_ADDR  = 0x27 # I2C device address
@@ -73,27 +76,46 @@ def lcd_string(message,line):
   lcd_byte(line, LCD_CMD)
   for i in range(LCD_WIDTH):
     lcd_byte(ord(message[i]),LCD_CHR)
+def show_ip():
+    global ip
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(0.3)
+    lcd_string("WIFI:",LCD_LINE_1)
+    lcd_string(ip,LCD_LINE_2)
 
 # Callbacks
 def MeetAlcohol(String):
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
-    time.sleep(3)
+    time.sleep(1)
     lcd_string("Blaas 5 seconden",LCD_LINE_1)
     lcd_string("In de sensor",LCD_LINE_2)
+    time.sleep(3)
     hoogstalcohol=0
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    lcd_string("Blijven blazen!",LCD_LINE_1)
     for i in range(0,6):
-        alcohol=klasse.read_channel(0)
+        waarde=klasse.read_channel(0)
+        alcohol=round((waarde/1023)*100,2)
+        lcd_string(f"{i} s ; {alcohol}%",LCD_LINE_2)
         if alcohol>hoogstalcohol:
             hoogstalcohol=alcohol
         time.sleep(1)
-    DeviceID=1
-    ActieID=3
-    Datum=datetime.now()
-    Waarde=float(hoogstalcohol)
-    Commentaar='Alcoholmeting'
-    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-    socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
+    time.sleep(3)
+    # DeviceID=1
+    # ActieID=3
+    # Datum=datetime.now()
+    # Waarde=float(hoogstalcohol)
+    # Commentaar='Alcoholmeting'
+    # DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    # socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+    print(f"Resultaat: {hoogstalcohol}")
+    
 
 def Shutdown(String):
     pass
@@ -150,6 +172,7 @@ def contactor(time):
     else:
         GPIO.output(relais,GPIO.LOW)
 
+
 # API ENDPOINTS
 
 
@@ -174,10 +197,6 @@ def read_users():
 def initial_connection():
     print('A new client connected')
 
-# @socketio.on('AskTemp')
-# def Temperatuur():
-#     temperatuur=onewire()
-#     emit('TempData', {'temperatuur': f'{temperatuur}'})
 
 @socketio.on('F2B_locktime')
 def LockTime(time):
@@ -237,12 +256,7 @@ if __name__ == '__main__':
         lcd_string("Welkom Bij",LCD_LINE_1)
         lcd_string("Alco-CarLock",LCD_LINE_2)
         time.sleep(3)
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        ipfull=check_output(['hostname','--all-ip-addresses'])
-        ip=str(ipfull.decode(encoding='utf-8'))[16:31]
-        lcd_string("WIFI:",LCD_LINE_1)
-        lcd_string(ip,LCD_LINE_2)
+        show_ip()
         # setup_gpio()
         start_chrome_thread()
         start_temp_thread()
