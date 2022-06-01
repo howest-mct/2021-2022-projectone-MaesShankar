@@ -29,6 +29,9 @@ I managed to write the data to my database.
 ### LCD
 Now I managed to show some messages on my LCD. and my IP address.
 
+### Live data on website
+I have managed to show my temperature on the site, also the history and alcohol history and users are found on the site.
+
 ## Instructables
 Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
 
