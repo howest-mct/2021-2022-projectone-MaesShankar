@@ -13,6 +13,7 @@ from datetime import datetime, date
 from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
+from mfrc522 import SimpleMFRC522
 
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
@@ -89,6 +90,24 @@ def MeetAlcohol(String):
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
     time.sleep(1)
+    lcd_string("Scan Badge",LCD_LINE_1)
+    time.sleep(3)
+    # naam=rfid()
+    naam='shankar'
+    if naam:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Scan OK",LCD_LINE_1)
+    else:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Scan NIET OK",LCD_LINE_1)
+    time.sleep(3)
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(1)
     lcd_string("Blaas 5 seconden",LCD_LINE_1)
     lcd_string("In de sensor",LCD_LINE_2)
     time.sleep(3)
@@ -107,15 +126,23 @@ def MeetAlcohol(String):
     lcd_string("",LCD_LINE_2)
     lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
     time.sleep(3)
-    # DeviceID=1
-    # ActieID=3
-    # Datum=datetime.now()
-    # Waarde=float(hoogstalcohol)
-    # Commentaar='Alcoholmeting'
-    # DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-    # socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+   
+    DeviceID=1
+    ActieID=3
+    Datum=datetime.now()
+    Waarde=float(hoogstalcohol)
+    Commentaar='Alcoholmeting'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    if naam=='shankar':
+        UserID=1
+    else:
+        UserID=2
+    ADatum=Datum
+    AWaarde=Waarde
+    DataRepository.create_alc_log(UserID,ADatum,AWaarde)
+    socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
     print(f"Resultaat: {hoogstalcohol}")
-    
+    show_ip()
 
 def Shutdown(String):
     pass
@@ -138,6 +165,7 @@ def error_handler(e):
 # Code voor Hardware
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)
+    reader = SimpleMFRC522()
     GPIO.setup(relais, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -172,6 +200,11 @@ def contactor(time):
     else:
         GPIO.output(relais,GPIO.LOW)
 
+def rfid():
+    id, text = reader.read()
+    print(id)
+    print(text)
+    return text
 
 # API ENDPOINTS
 
