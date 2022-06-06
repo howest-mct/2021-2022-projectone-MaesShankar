@@ -17,18 +17,7 @@ const error_get=function(){
                     <td class="c-cell_second">Error</td>`;   
   document.querySelector('.js-table').innerHTML=htmlString
 }
-const fill_table_users=function(jsonObject){
-    let htmlString=''
-    for(let data of jsonObject){
-      htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-        <td class="c-cell_second">${data.UserID}</td>
-        <td class="c-cell_second">${data.Naam}</td>
-        <td class="c-cell_second">${data.Voornaam}</td>
-      </tr>`
-    }
-    document.querySelector('.js-table-users').innerHTML=htmlString;
-    listenToLockbuttons()
-}
+
 const listenToSocket = function () {
   socketio.on('connect', function () {
     console.log('verbonden met socket webserver');

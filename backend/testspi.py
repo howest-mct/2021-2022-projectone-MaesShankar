@@ -4,7 +4,7 @@ from RPi import GPIO
 
 GPIO.setmode(GPIO.BCM)
 spi = spidev.SpiDev()
-spi.open(0,0)
+spi.open(0,1)
 spi.max_speed_hz = 10 ** 5  
 
 def read_spi(channel):
@@ -14,7 +14,7 @@ def read_spi(channel):
 try:
   while True:
     channeldata = read_spi(0)
-    channeldata=(channeldata/1023)*3.3
+    channeldata=(channeldata/1023)*100
     print("Waarde POT = {}".format(round(channeldata,2)),'Volt')
     
  

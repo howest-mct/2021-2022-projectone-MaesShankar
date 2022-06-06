@@ -5,40 +5,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Huis</title>
+    <title>Alco-CarLock</title>
     <link rel="stylesheet" href="style/screen.css" />
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
         integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU"
         crossorigin="anonymous"></script>
     <script src="script/dataHandler.js"></script>
-    <script src="script/history.js"></script>
+    <script src="script/app.js"></script>
+    <script src="script/mobilenav.js"></script>
 </head>
 
-<body class="u-max-width-page">
-    <header class="o-row o-row--md">
-        <div class="o-container o-layout o-layout--align-center ">
-            <div class="c-header o-layout">
-                <div class="o-layout--item u-1-of-3-bp3">
+<body class="u-max-width-page ">
+    <div class="c-page">
+        <header class="o-row o-row--md o-row--header">
+            <div class="o-container">
+                <div class="c-header">
                     <div class="c-header_logo">
-                        <h1 class="c-logo">
-                            Alco-CarLock
+                        <h1>
+                            <a class="c-logo" href="index.html">
+                                Alco-CarLock
+                            </a>
                         </h1>
                     </div>
                 </div>
 
-                <div class="o-layout__item u-1-of-3-bp3">
-                    <div class="c-header__nav c-header__nav--main">
-                        <nav class="c-nav">
-                            <ul class="o-list c-nav__list">
-                                <li class="c-nav__item "><a href="index.html" class="c-nav__link">Lock
-                                        Device</a></li>
-                                <li class="c-nav__item is selected">
-                                    <a href="history.html" class="c-nav__link ">History</a>
-                                </li>
-                                <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
-                            </ul>
-                        </nav>
-                    </div>
+
+                <div class="c-header__nav c-header__nav--main">
+                    <nav class="c-nav">
+                        <ul class="o-list c-nav__list">
+                            <li class="c-nav__item">
+                                <a href="history.html" class="c-nav__link ">History</a>
+                            </li>
+                            <li class="c-nav__item">
+                                <a href="historyalc.html" class="c-nav__link ">Alcohol History</a>
+                            </li>
+                            <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
+                        </ul>
+                    </nav>
                 </div>
 
                 <div class="c-header__mobile-nav-trigger">
@@ -48,19 +51,17 @@
                         </svg>
                     </button>
                 </div>
-
             </div>
-        </div>
-    </header>
-    <section class="o-row o-row--md u-max-width-page">
-        <div class="c-container">
-            <div class="o-section o-section-lg">
-    
-    
-                <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
-                    <div class="o-layout__item">
-                        <h3 id="History" class="u-color--dark">Historiek</h3>
-                        <!-- <div class="o-layout--gutter-sm o-layout--align-center">
+        </header>
+        <section class="o-row o-row--md u-max-width-page">
+            <div class="c-container">
+                <div class="o-section o-section-lg">
+
+
+                    <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
+                        <div class="o-layout__item">
+                            <h3 id="History" class="u-color--dark">Historiek</h3>
+                            <!-- <div class="o-layout--gutter-sm o-layout--align-center">
                             <div class="o-layout__item u-1-of-2-bp3">
                                 <button class="u-button">AlcoholHistoriek</button>
                             </div>
@@ -68,31 +69,62 @@
                                 <button class="u-button">Historiek</button>
                             </div>
                         </div> -->
-                        <table name="Historiek">
-                            <thead class="js-table-head">
-                                <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                    <th class="c-cell">HistoriekID</th>
-                                    <th class="c-cell">DeviceID</th>
-                                    <th class="c-cell">ActieID</th>
-                                    <th class="c-cell">Datum</th>
-                                    <th class="c-cell">Waarde</th>
-                                    <th class="c-cell">Commentaar</th>
-                                </tr>
-                            </thead>
-                            <tbody class="js-table">
-                                <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            <table name="Historiek">
+                                <thead class="js-table-head">
+                                    <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                        <th class="c-cell">HistoriekID</th>
+                                        <th class="c-cell">DeviceID</th>
+                                        <th class="c-cell">ActieID</th>
+                                        <th class="c-cell">Datum</th>
+                                        <th class="c-cell">Waarde</th>
+                                        <th class="c-cell">Commentaar</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="js-table-historiek">
+                                    <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
+    </div>
+    <aside class="c-mobile-nav">
+        <div class="c-mobile-nav__bg"></div>
+        <div class="c-mobile-nav__body">
+            <div class="c-mobile-nav__header">
+                <a class="c-logo" href="index.html">
+                    Alco-CarLock
+                </a>
+                <button class="o-button-reset c-nav-trigger js-toggle-nav">
+                    <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="c-mobile-nav__nav c-mobile-nav__nav--main">
+                <nav class="c-nav">
+                    <ul class="o-list c-nav__list">
+                        
+                        <li class="c-nav__item">
+                            <a href="history.html" class="c-nav__link ">History</a>
+                        </li>
+                        <li class="c-nav__item">
+                            <a href="historyalc.html" class="c-nav__link ">Alcohol History</a>
+                        </li>
+                        <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-    </section>
+    </aside>
 </body>
