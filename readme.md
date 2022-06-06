@@ -32,6 +32,20 @@ Now I managed to show some messages on my LCD. and my IP address.
 ### Live data on website
 I have managed to show my temperature on the site, also the history and alcohol history and users are found on the site.
 
+### Alcohol sensor
+The alcohol gas sensor, shorter, the mq-3 is a simple analoge signal. So I will read it with an MCP3008 SPI. In the picture you will fing a class that I will use in a different file, you only have to define the bus because we also have the RFID which is bus 0. So now I can call him in my main code. and simply insert read_channel("channel numbre").
+
+Now I can save the data. I need the biggest numbre so in a for loop if 5 seconds I will check the biggest numbre and save it. That I will convert to promille.
+
+This data i will send to the history and the alcohol history database.
+
+### RFID
+For the alcohol database I need a UserID. But that I only can determine if I have a name. So I need to scan the badge of the user.
+
+I used a library to read my RFID. But before we can read we have to write first. So the first program I will run the riting programming and will hold the badge against the RFID. I have to insert a name. Now there is an ID and a name configured in the RFID. So if we test the reading program we will see that it will work.
+
+Next up: connecting the RFID to the gas sensor. So before I will test for alcohol I will ask to scan the badge. If the scan is alright, I will tell the user and then He can blow. With
+
 ## Instructables
 Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
 
