@@ -13,6 +13,7 @@ from datetime import datetime, date
 from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
+from mfrc522 import SimpleMFRC522
 
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
@@ -89,33 +90,61 @@ def MeetAlcohol(String):
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
     time.sleep(1)
-    lcd_string("Blaas 5 seconden",LCD_LINE_1)
-    lcd_string("In de sensor",LCD_LINE_2)
+    lcd_string("Scan Badge",LCD_LINE_1)
     time.sleep(3)
-    hoogstalcohol=0
-    lcd_string("",LCD_LINE_1)
-    lcd_string("",LCD_LINE_2)
-    lcd_string("Blijven blazen!",LCD_LINE_1)
-    for i in range(0,6):
-        waarde=klasse.read_channel(0)
-        alcohol=round((waarde/1023)*100,2)
-        lcd_string(f"{i} s ; {alcohol}%",LCD_LINE_2)
-        if alcohol>hoogstalcohol:
-            hoogstalcohol=alcohol
+    id=int(rfid())
+    # naam='shankar'
+    if id == 933210265772 or id==453047185099:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
         time.sleep(1)
-    lcd_string("",LCD_LINE_1)
-    lcd_string("",LCD_LINE_2)
-    lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
-    time.sleep(3)
-    # DeviceID=1
-    # ActieID=3
-    # Datum=datetime.now()
-    # Waarde=float(hoogstalcohol)
-    # Commentaar='Alcoholmeting'
-    # DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-    # socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
-    print(f"Resultaat: {hoogstalcohol}")
+        lcd_string("Scan OK",LCD_LINE_1)
+        time.sleep(3)
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Blaas 5 seconden",LCD_LINE_1)
+        lcd_string("In de sensor",LCD_LINE_2)
+        time.sleep(3)
+        hoogstalcohol=0
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        lcd_string("Blijven blazen!",LCD_LINE_1)
+        for i in range(0,6):
+            waarde=klasse.read_channel(0)
+            alcohol=round((waarde/1023)*10,2)
+            lcd_string(f"{i} s ; {alcohol}%",LCD_LINE_2)
+            if alcohol>hoogstalcohol:
+                hoogstalcohol=alcohol
+            time.sleep(1)
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
+        time.sleep(3)
     
+        DeviceID=1
+        ActieID=3
+        Datum=datetime.now()
+        Waarde=float(hoogstalcohol)
+        Commentaar='Alcoholmeting'
+        DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+        if id== 933210265772:
+            UserID=1
+        elif id==453047185099:
+            UserID=2
+        ADatum=Datum
+        AWaarde=Waarde
+        DataRepository.create_alc_log(UserID,ADatum,AWaarde)
+        socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+        print(f"Resultaat: {hoogstalcohol}")
+        show_ip()
+    else:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Scan NIET OK",LCD_LINE_1)
+        time.sleep(3)
+        show_ip()
 
 def Shutdown(String):
     pass
@@ -138,6 +167,8 @@ def error_handler(e):
 # Code voor Hardware
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)
+    global reader
+    reader = SimpleMFRC522()
     GPIO.setup(relais, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -172,6 +203,12 @@ def contactor(time):
     else:
         GPIO.output(relais,GPIO.LOW)
 
+def rfid():
+    global reader
+    id, text = reader.read()
+    print(id)
+    print(text)
+    return id
 
 # API ENDPOINTS
 
@@ -190,6 +227,11 @@ def read_history():
 def read_users():
     print('Get users')
     result = DataRepository.read_users()
+    return jsonify(result)
+@app.route('/api/v1/alchistory/', methods=['GET'])
+def read_alc_historiek():
+    print('Get users')
+    result = DataRepository.read_alc_history()
     return jsonify(result)
 
 #SocketIO

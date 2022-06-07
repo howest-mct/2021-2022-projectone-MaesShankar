@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Users</title>
+    <title>history Alcohol</title>
     <link rel="stylesheet" href="style/screen.css" />
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
         integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU"
@@ -15,7 +15,7 @@
     <script src="script/mobilenav.js"></script>
 </head>
 
-<body class="u-max-width-page ">
+<body class="u-max-width-page">
     <div class="c-page">
         <header class="o-row o-row--md o-row--header">
             <div class="o-container">
@@ -33,7 +33,7 @@
                 <div class="c-header__nav c-header__nav--main">
                     <nav class="c-nav">
                         <ul class="o-list c-nav__list">
-                          
+                            
                             <li class="c-nav__item">
                                 <a href="history.html" class="c-nav__link ">History</a>
                             </li>
@@ -54,28 +54,36 @@
                 </div>
             </div>
         </header>
+        <section class="o-row o-row--md u-max-width-page">
+            <div class="c-container">
+                <div class="o-section o-section-lg">
 
-        <section class="o-row o-row--md u-max-width-md">
-            <div class="o-container">
-                <div class="o-layout o-layout--gutter-sm o-layout--align-center">
-                    <div class="o-layout__item">
-                        <h3 id="Users" class="u-color--dark">Users</h3>
-                        <table name="Users">
-                            <thead class="js-table-head">
-                                <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                    <th class="c-cell">UserID</th>
-                                    <th class="c-cell">Naam</th>
-                                    <th class="c-cell">Voornaam</th>
-                                </tr>
-                            </thead>
-                            <tbody class="js-table-users">
-                                <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                    <td class="c-cell_second">Data</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                    <div id="history" class="o-layout o-layout--gutter-sm o-layout--justify-center">
+                        <div class="o-layout__item">
+                            <h3 id="History" class="u-color--dark">Alcohol Historiek</h3>
+
+                            <table name="Historiek">
+                                <thead class="js-table-head">
+                                    <tr class="c-row o-layout__item o-layout--gutter-lg">
+                                        <th class="c-cell">HistoriekID</th>
+                                        <th class="c-cell">UserID</th>
+                                        <th class="c-cell">Datum</th>
+                                        <th class="c-cell">Waarde</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="js-table-alc">
+                                    <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+                                        <td class="c-cell_second">Data</td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,7 +106,6 @@
             <div class="c-mobile-nav__nav c-mobile-nav__nav--main">
                 <nav class="c-nav">
                     <ul class="o-list c-nav__list">
-                   
                         <li class="c-nav__item">
                             <a href="history.html" class="c-nav__link ">History</a>
                         </li>
