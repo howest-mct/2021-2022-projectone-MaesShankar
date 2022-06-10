@@ -13,9 +13,10 @@ def read_spi(channel):
 
 try:
   while True:
-    channeldata = read_spi(0)
+    channeldata = read_spi(1)
     channeldata=(channeldata/1023)*100
-    print("Waarde POT = {}".format(round(channeldata,2)),'Volt')
+    print("Waarde POT = {}".format(round(channeldata,2)))
+    time.sleep(2)
     
  
 except KeyboardInterrupt:

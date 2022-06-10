@@ -14,14 +14,26 @@ from ClassSPI import MCPclass
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 from mfrc522 import SimpleMFRC522
+import os
+
 
 sensor_file_name = '/sys/bus/w1/devices/28-0183a800007d/w1_slave'
 relais=24
+buzzer=21
 start=23
 stop=18
-klasse=MCPclass()
 ipfull=check_output(['hostname','--all-ip-addresses'])
 ip=str(ipfull.decode(encoding='utf-8'))[:14]
+
+
+forbidden_list=[]
+dataTimer=0
+temperatuur=0
+alcohol=0
+lock=0
+startAlc=False
+uitTimeS=0
+uitTimeW=0
 #LCD
 
 I2C_ADDR  = 0x27 # I2C device address
@@ -86,69 +98,11 @@ def show_ip():
     lcd_string(ip,LCD_LINE_2)
 
 # Callbacks
-def MeetAlcohol(String):
-    lcd_string("",LCD_LINE_1)
-    lcd_string("",LCD_LINE_2)
-    time.sleep(1)
-    lcd_string("Scan Badge",LCD_LINE_1)
-    time.sleep(3)
-    id=int(rfid())
-    # naam='shankar'
-    if id == 933210265772 or id==453047185099:
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        time.sleep(1)
-        lcd_string("Scan OK",LCD_LINE_1)
-        time.sleep(3)
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        time.sleep(1)
-        lcd_string("Blaas 5 seconden",LCD_LINE_1)
-        lcd_string("In de sensor",LCD_LINE_2)
-        time.sleep(3)
-        hoogstalcohol=0
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        lcd_string("Blijven blazen!",LCD_LINE_1)
-        for i in range(0,6):
-            waarde=klasse.read_channel(0)
-            alcohol=round((waarde/1023)*10,2)
-            lcd_string(f"{i} s ; {alcohol}%",LCD_LINE_2)
-            if alcohol>hoogstalcohol:
-                hoogstalcohol=alcohol
-            time.sleep(1)
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
-        time.sleep(3)
+def callbackALC(String):
+    global startAlc
+    startAlc = not startAlc
+    print(startAlc)
     
-        DeviceID=1
-        ActieID=3
-        Datum=datetime.now()
-        Waarde=float(hoogstalcohol)
-        Commentaar='Alcoholmeting'
-        DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-        if id== 933210265772:
-            UserID=1
-        elif id==453047185099:
-            UserID=2
-        ADatum=Datum
-        AWaarde=Waarde
-        DataRepository.create_alc_log(UserID,ADatum,AWaarde)
-        socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
-        print(f"Resultaat: {hoogstalcohol}")
-        show_ip()
-    else:
-        lcd_string("",LCD_LINE_1)
-        lcd_string("",LCD_LINE_2)
-        time.sleep(1)
-        lcd_string("Scan NIET OK",LCD_LINE_1)
-        time.sleep(3)
-        show_ip()
-
-def Shutdown(String):
-    pass
-
 
 # Code voor Flask
 
@@ -167,13 +121,13 @@ def error_handler(e):
 # Code voor Hardware
 def setup_gpio():
     GPIO.setmode(GPIO.BCM)
-    global reader
-    reader = SimpleMFRC522()
     GPIO.setup(relais, GPIO.OUT)
+    GPIO.setup(buzzer, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(start,GPIO.RISING,MeetAlcohol, bouncetime=500)
-    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=500)
+    GPIO.add_event_detect(start,GPIO.RISING,callbackALC, bouncetime=600)
+    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=600)
+   
 
 def onewire():
     while True:
@@ -186,29 +140,224 @@ def onewire():
         testuren=geheel[:2] + ',' + geheel[3:]
         data=geheel[:2] + '.' + geheel[3:]
         # print(f'onewire {testuren}')
+        global temperatuur
+        temperatuur=data
+        # print(f"temperatuur:{data}")
         time.sleep(1)
-        DeviceID=2
+def MeetAlcData():
+    while True:
+        klasse=MCPclass()
+        global alcohol
+        data=klasse.read_channel(1)
+        alcohol=round((data/1023)*100,2) 
+        print(f"alcohol:{alcohol}")
+        klasse.closespi()
+        time.sleep(1)
+
+def dataTemp():
+    while True:
+        global temperatuur
+        global dataTimer
+        if dataTimer==60:
+            print("Thread")
+            DeviceID=2
+            ActieID=3
+            Datum=datetime.now()
+            Waarde=float(temperatuur)
+            Commentaar='Temperatuursmeting'
+            DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+            # return testuren
+            print(Waarde)
+            socketio.emit('TempData', {'temperatuur': f'{Waarde}'})
+            dataTimer=0
+        dataTimer+=1
+        time.sleep(1)
+
+def loop_main():
+    global startAlc
+    global uitTimeS
+    global uitTimeW
+    while True:
+        # print('loop')
+        if startAlc is True:
+            MeetAlcohol()
+        if uitTimeS>0:
+            uitTimeS=uitTimeS-1
+            print(f's:{uitTimeS}')
+            socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
+            time.sleep(1)
+
+        if uitTimeW>0:
+            uitTimeW=uitTimeW-1
+            print(f'w:{uitTimeW}')
+            socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
+            time.sleep(1)
+
+
+        if uitTimeS<=0 :
+            socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
+            contactor('0','933210265772')
+            time.sleep(1)
+
+            
+        if uitTimeW<=0:
+            socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
+            contactor('0','453047185099')
+            time.sleep(1)
+
+def MeetAlcohol():
+    global startAlc
+    global uitTimeW
+    global uitTimeS
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(1)
+    lcd_string("Scan Badge",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    time.sleep(3)
+    id=rfid()
+    # naam='shankar'
+    list_forbidden=DataRepository.read_toegang(id)
+    dict_forbidden=list_forbidden[0]
+    toegang=dict_forbidden['Toegang']
+    print(toegang,id)
+    control=0
+    if(id==933210265772):
+        control=uitTimeS
+    else:
+        control=uitTimeW
+
+    if control > 0:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Kan niet scannen.",LCD_LINE_1)
+        lcd_string("Timeout",LCD_LINE_2)
+        time.sleep(2)
+        startAlc = not startAlc
+        show_ip()
+    else:
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Scan OK",LCD_LINE_1)
+        time.sleep(3)
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Blaas 5 seconden",LCD_LINE_1)
+        lcd_string("In de sensor",LCD_LINE_2)
+        setup_gpio()
+        GPIO.output(buzzer,GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.LOW)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.LOW)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.HIGH)
+        time.sleep(0.5)
+        GPIO.output(buzzer,GPIO.LOW)
+        time.sleep(0.5)
+        hoogstalcohol=0
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        lcd_string("Blijven blazen!",LCD_LINE_1)
+        GPIO.output(buzzer,GPIO.HIGH)
+        for i in range(0,6):
+            global alcohol
+            if alcohol>hoogstalcohol:
+                hoogstalcohol=alcohol
+            lcd_string(f"{i} s ; {hoogstalcohol}%",LCD_LINE_2)
+            time.sleep(1)
+        GPIO.output(buzzer,GPIO.LOW)
+        time.sleep(0.5)
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
+        time.sleep(2)
+        DeviceID=1
         ActieID=3
         Datum=datetime.now()
-        Waarde=float(data)
-        Commentaar='Temperatuursmeting'
+        Waarde=float(hoogstalcohol)
+        Commentaar='Alcoholmeting'
         DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
-        # return testuren
-        print(Waarde)
-        socketio.emit('TempData', {'temperatuur': f'{Waarde}'})
-
-def contactor(time):
-    if time == '3' or time == '6':
-        GPIO.output(relais,GPIO.HIGH)
+        list_userID=DataRepository.read_userID(id)
+        # print(dict_userID)
+        dict_userID=list_userID[0]
+        UserID=dict_userID['UserID']
+        ADatum=Datum
+        AWaarde=Waarde
+        DataRepository.create_alc_log(UserID,ADatum,AWaarde)
+        socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+        print(f"Resultaat: {hoogstalcohol}")
+        startAlc = not startAlc
+        check_alcohol(hoogstalcohol,id)
+def check_alcohol(percentage,id):
+    if percentage >=48.88:      # 400 (limit)/1023*100
+        DataRepository.update_toegang('0',id)
+        contactor('3',id)
+    elif percentage>=70.00:
+        DataRepository.update_toegang('0',id)
+        contactor('6',id)
     else:
+        DataRepository.update_toegang('1',id)
+        contactor('0',id)
+
+def contactor(tijd,id):
+    global uitTimeS 
+    global uitTimeW
+    # setup_gpio()
+    list_forbidden=DataRepository.read_toegang(id)
+    dict_forbidden=list_forbidden[0]
+    toegang=dict_forbidden['Toegang']
+    if str(tijd) == '3':
+        if int(id)==933210265772:
+            uitTimeS=40
+        elif int(id)==453047185099:
+            uitTimeW=40
         GPIO.output(relais,GPIO.LOW)
+        lcd_string("Geblokkeerd",LCD_LINE_1)
+        lcd_string("Voor 3 uur",LCD_LINE_2)
+        time.sleep(2)
+        show_ip()
+    elif str(tijd) == '6':
+        if int(id)==933210265772:
+            uitTimeS=360
+        elif int(id)==453047185099:
+            uitTimeW=360
+
+        GPIO.output(relais,GPIO.LOW)
+        lcd_string("U mag niet rijden",LCD_LINE_1)
+        lcd_string("Voor 6 uur",LCD_LINE_2)
+        time.sleep(1)
+        show_ip()
+    elif str(tijd) == '0' and toegang==1:
+        GPIO.output(relais,GPIO.HIGH)
+        time.sleep(5)
+        GPIO.output(relais,GPIO.LOW)
+        DataRepository.update_toegang('0',id)
+     
 
 def rfid():
     global reader
+    reader = SimpleMFRC522()
+    reader.__init__()
     id, text = reader.read()
     print(id)
     print(text)
+    reader.close_spi()
     return id
+
+def Shutdown(String):
+    # lcd_string("Shut Down",LCD_LINE_1)
+    # lcd_string("Farewell!",LCD_LINE_2)
+    # time.sleep(2)
+    # os.system("sudo shutdown -h now")
+    pass
+
+
 
 # API ENDPOINTS
 
@@ -241,10 +390,16 @@ def initial_connection():
 
 
 @socketio.on('F2B_locktime')
-def LockTime(time):
-    print(f'tijd {time}')
-    contactor(time)
-
+def LockTime(time,id):
+    if time=='3':
+        print(f'tijd {time} id={id}')
+        check_alcohol(3,id)
+    elif time=='6':
+        print(f'tijd {time} id={id}')
+        check_alcohol(6,id)
+    elif time=='0':
+        print(f'tijd {time} id={id}')
+        check_alcohol(0,id)
 #ChromeThread
 def start_chrome_kiosk():
     import os
@@ -285,7 +440,18 @@ def start_temp_thread():
     Thread = threading.Thread(target=onewire, args=(), daemon=True)
     Thread.start()
 
-
+def start_tempData_thread():
+    print("**** Starting TEMPData ****")
+    ThreadData = threading.Thread(target=dataTemp, args=(), daemon=True)
+    ThreadData.start()
+def start_alcohol_thread():
+    print("**** Starting ALC ****")
+    ThreadAlc = threading.Thread(target=MeetAlcData, args=(), daemon=True)
+    ThreadAlc.start()
+def thread():
+    print("**** Starting Loop ****")
+    Threads = threading.Thread(target=loop_main, args=(), daemon=True)
+    Threads.start()
 
 # ANDERE FUNCTIES
 
@@ -302,8 +468,12 @@ if __name__ == '__main__':
         # setup_gpio()
         start_chrome_thread()
         start_temp_thread()
+        start_tempData_thread()
+        start_alcohol_thread()
+        thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0',port=5000)
+                
     except KeyboardInterrupt:
         print ('KeyboardInterrupt exception is caught')
     finally:

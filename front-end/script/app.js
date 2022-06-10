@@ -3,6 +3,7 @@
 const lanIP = `http://${window.location.hostname}:5000`;
 console.log(lanIP)
 const socketio = io(`${lanIP}`);
+let radioid=0
 // Get
 
 const getHistory = function () {
@@ -22,12 +23,28 @@ const getUsers = function () {
 };
 // Show
 const ShowAlcohol=function(alcohol){
-  document.querySelector('js-alcoholpercentage').innerHTML=`${alcohol}`
+  document.querySelector('.js-alcohol').innerHTML=`<p class="c-temperatuur js-alcoholpercentage">${alcohol}%</p>`
 }
 const ShowTemperatuur=function(temperatuur){
   console.log(temperatuur)
   document.querySelector('.js-temperatuur').innerHTML=`<p class="c-temperatuur js-temperatuur">${temperatuur}°C</p>`
 }
+const showSluiting=function(locktime,id){
+  let htmlid=``
+  if(id==933210265772){
+    htmlid=`Shankar`
+  }else if(id==453047185099){
+    htmlid=`Willy`
+  }else{
+    htmlid=`JP`
+  }
+  
+  let htmlSluit=``
+  htmlSluit=`<p class="c-temperatuur js-sluiting">${locktime} s</p>`
+  document.querySelector('.js-sluiting').innerHTML=htmlSluit
+  document.querySelector('.js-idsluit').innerHTML=htmlid
+  }
+   
 
 
 const error_get=function(){
@@ -56,12 +73,16 @@ const fill_table=function(jsonObject){
     document.querySelector('.js-table-historiek').innerHTML=htmlString
 }
 const fill_table_users=function(jsonObject){
+  // console.log(jsonObject)
     let htmlString=''
     for(let data of jsonObject){
       htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
         <td class="c-cell_second">${data.UserID}</td>
         <td class="c-cell_second">${data.Naam}</td>
         <td class="c-cell_second">${data.Voornaam}</td>
+        <td class="c-cell_second">${data.RFID}</td>
+        <td class="c-cell_second">${data.Toegang}</td>
+
       </tr>`
     }
     document.querySelector('.js-table-users').innerHTML=htmlString;
@@ -77,6 +98,7 @@ const fill_table_alc=function(jsonObject){
         <td class="c-cell_second">${data.UserID}</td>
         <td class="c-cell_second">${data.ADatum}</td>
         <td class="c-cell_second_special">${data.AWaarde}</td>
+        
         </tr>`;
     }
     document.querySelector('.js-table-alc').innerHTML=htmlString
@@ -84,11 +106,21 @@ const fill_table_alc=function(jsonObject){
 //Event listner
 const listenToLockbuttons = function () {
   const buttons = document.querySelectorAll('.js-lock');
+  for(const radiobutton of document.querySelectorAll('input[name="id"]')){
+        radiobutton.addEventListener('click',function(){
+          if(radiobutton.checked){
+            radioid=radiobutton.getAttribute('value')
+          console.log(radioid)
+          }
+        });
+      }
   for (const b of buttons) {
     b.addEventListener('click', function () {
-      const locktime= b.getAttribute('data-locktime')
+      const locktime= b.getAttribute('data-locktime')       
       console.log(`locktime: ${locktime}`)
-      socketio.emit('F2B_locktime', locktime);
+      // showSluiting(locktime,radioid)
+      // console.log(`time ${locktime} id ${radioid}`)
+      socketio.emit('F2B_locktime', locktime,radioid);
     });
   }
 };
@@ -99,9 +131,7 @@ const listenToSocket = function () {
   socketio.on('connect', function () {
     console.log('verbonden met socket webserver');
   });
-  socketio.on('AlcoholData', function (parameter) {
-    ShowAlcohol(parameter.alcohol)
-  });
+  
 };
 const listenToTempSocket=function(){
   socketio.on('B2F_connected', function (parameter) {
@@ -110,6 +140,14 @@ const listenToTempSocket=function(){
   });
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)
+  });
+  socketio.on('AlcoholData', function (parameter) {
+    console.log(parameter.alcohol)
+    ShowAlcohol(parameter.alcohol)
+  });
+  socketio.on('Sluiting', function (parameter) {
+    console.log(parameter.time)
+    showSluiting(parameter.time,parameter.id)
   });
 }
 

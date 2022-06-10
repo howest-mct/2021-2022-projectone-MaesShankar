@@ -513,6 +513,10 @@ span:last-child {
     font-size: 43px;
     color: #202024;
 }
+.c-temperatuur-sm {
+    font-size: 30px;
+    color: #202024;
+}
 
 /* .c-cell{
     color:#5051db;
