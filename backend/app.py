@@ -351,11 +351,11 @@ def rfid():
     return id
 
 def Shutdown(String):
-    # lcd_string("Shut Down",LCD_LINE_1)
-    # lcd_string("Farewell!",LCD_LINE_2)
-    # time.sleep(2)
-    # os.system("sudo shutdown -h now")
-    pass
+    lcd_string("Shut Down",LCD_LINE_1)
+    lcd_string("Farewell!",LCD_LINE_2)
+    time.sleep(2)
+    os.system("sudo shutdown -h now")
+    # pass
 
 
 
