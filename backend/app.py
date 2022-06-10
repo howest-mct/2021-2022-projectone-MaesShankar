@@ -22,7 +22,6 @@ relais=24
 buzzer=21
 start=23
 stop=18
-klasse=MCPclass()
 ipfull=check_output(['hostname','--all-ip-addresses'])
 ip=str(ipfull.decode(encoding='utf-8'))[:14]
 
@@ -126,8 +125,8 @@ def setup_gpio():
     GPIO.setup(buzzer, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(start,GPIO.RISING,callbackALC, bouncetime=500)
-    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=500)
+    GPIO.add_event_detect(start,GPIO.RISING,callbackALC, bouncetime=600)
+    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=600)
    
 
 def onewire():
@@ -147,10 +146,12 @@ def onewire():
         time.sleep(1)
 def MeetAlcData():
     while True:
+        klasse=MCPclass()
         global alcohol
         data=klasse.read_channel(1)
-        alcohol=round((data/1023)*10,2)
-        # print(f"alcohol:{alcohol}")
+        alcohol=round((data/1023)*100,2) 
+        print(f"alcohol:{alcohol}")
+        klasse.closespi()
         time.sleep(1)
 
 def dataTemp():
@@ -264,7 +265,7 @@ def MeetAlcohol():
         lcd_string("",LCD_LINE_2)
         lcd_string("Blijven blazen!",LCD_LINE_1)
         GPIO.output(buzzer,GPIO.HIGH)
-        for i in range(0,2):
+        for i in range(0,6):
             global alcohol
             if alcohol>hoogstalcohol:
                 hoogstalcohol=alcohol
@@ -294,10 +295,10 @@ def MeetAlcohol():
         startAlc = not startAlc
         check_alcohol(hoogstalcohol,id)
 def check_alcohol(percentage,id):
-    if percentage >=3.00:
+    if percentage >=48.88:      # 400 (limit)/1023*100
         DataRepository.update_toegang('0',id)
         contactor('3',id)
-    elif percentage>=6.00:
+    elif percentage>=70.00:
         DataRepository.update_toegang('0',id)
         contactor('6',id)
     else:
