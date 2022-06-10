@@ -12,17 +12,35 @@ class DataRepository:
 
     @staticmethod
     def read_history():
-        sql = "SELECT * from Historiek ORDER BY datum ASC"
+        sql = "SELECT * from Historiek ORDER BY HistoriekID DESC LIMIT 50"
         return Database.get_rows(sql)
     @staticmethod
     def read_alc_history():
-        sql = "SELECT * FROM AlcoholHistoriek ORDER BY ADatum ASC"
+        sql = "SELECT * FROM AlcoholHistoriek ORDER BY AlcHistoriekID DESC LIMIT 50"
         return Database.get_rows(sql)
     
     @staticmethod
     def read_users():
         sql="SELECT * FROM Users ORDER BY UserID ASC"
         return Database.get_rows(sql)
+    @staticmethod
+    def read_userID(id):
+        sql="SELECT UserID FROM Users Where RFID like %s"
+        params=[id]
+        return Database.get_rows(sql,params)
+    @staticmethod
+    def read_toegang(id):
+        sql="SELECT Toegang FROM Users Where RFID like %s"
+        params=[id]
+        return Database.get_rows(sql,params)
+    @staticmethod
+    def update_toegang(toegang,id):
+        sql="UPDATE Users SET Toegang=%s WHERE RFID=%s ;"
+        params=[toegang,id]
+        Database.execute_sql(sql,params)
+    
+
+    
     @staticmethod
     def create_log(DeviceID,ActieID,Datum,Waarde,Commentaar):
         sql = "INSERT INTO Historiek(DeviceID,ActieID,Datum,Waarde,Commentaar) Values(%s,%s,%s,%s,%s);"
