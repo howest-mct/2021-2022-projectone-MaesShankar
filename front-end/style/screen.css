@@ -192,7 +192,8 @@ span:last-child {
 
 .tiles {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 25px;
+    grid-template-columns: repeat(auto-fit, 200px);
     column-gap: 1rem;
     row-gap: 1rem;
     margin-top: 1.25rem;
@@ -349,10 +350,25 @@ span:last-child {
 .o-layout {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
+}
+.o-layout.table {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column-reverse;
+    margin-right: 20px;
+}
+@media (min-width: 768px) {
+    .o-layout {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+    
 }
 
 .o-layout__item {
     flex-basis: 100%;
+    margin: 20px;
 }
 
 /* gutter modifiers, these affect o-layout__item too */
@@ -511,11 +527,14 @@ span:last-child {
 */
 .c-temperatuur {
     font-size: 43px;
-    color: #202024;
+    color: white;
 }
 .c-temperatuur-sm {
     font-size: 30px;
     color: #202024;
+}
+.c-svg{
+    color: #fff;
 }
 
 /* .c-cell{
@@ -536,9 +555,10 @@ span:last-child {
     border:#000 0.5px solid;
 } */
 .c-logo {
-    height: 35px;
+    height: 36px;
+    font-size: 30px;
     display: flex;
-    align-items: center;
+    align-items: baseline
 }
 
 .c-logo__symbol {
@@ -547,7 +567,8 @@ span:last-child {
 
 @media (min-width: 768px) {
     .c-logo {
-        height: 65px;
+        height: 36px;
+        font-size: 35px;
     }
 }
 
@@ -560,6 +581,7 @@ span:last-child {
 .c-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     align-items: center;
     border-color: #20223a;
 
@@ -594,7 +616,7 @@ span:last-child {
 */
 
 .c-nav-trigger {
-    display: flex;
+    display: fixed;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
@@ -734,6 +756,8 @@ span:last-child {
     Utility classes to put specific margins and paddings onto elements
 */
 table {
+
+    display:table;
     border-collapse: collapse;
     border-spacing: 0;
     margin: 25px 0;
@@ -741,14 +765,14 @@ table {
     font-family: sans-serif;
     width: 100%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    overflow-x: auto;
+    overflow-x:scroll;
+    grid-template-columns: auto auto;
 }
-
+/* 
 @media (min-width: 375px) {
     table {
-        grid-template-columns: auto auto;
     }
-}
+} */
 
 thead tr {
     background-color: #3385ff;
@@ -780,20 +804,19 @@ tb .u-container_design {
 }
 
 .u-button {
+    display: block;
     background-color: #4F95FF;
     border-color: #2E77E6;
     color: white;
     font-weight: bold;
     padding: 20px 35px;
+    min-width: fit-content;
+    min-height: fit-content;
 }
-
-.u-button-nav {
-    background-color: #4F95FF;
-    border-color: #2E77E6;
-    color: white;
-    font-weight: bold;
+.u-text{
     font-size: 16px;
-    padding: 7.5px 16px;
+    color: #000;
+    margin: 10px 10px 10px 0px;
 }
 
 .u-pt-clear {

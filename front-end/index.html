@@ -62,13 +62,13 @@
                     <h2 class="js-name u-color--dark">Welcome</h2>
                 </div>
                 <div class="tiles o-layout o-layout--align-center o-layout--justify-center">
-                    <div class="o-layout__item u-1-of-3-bp2">
+                    <div class="o-layout__item u-1-of-3-bp3">
                         <article class="tile">
                             <div class="tile-header">
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                     version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 251.241 251.241"
                                     style="enable-background:new 0 0 251.241 251.241;" xml:space="preserve" width="100"
-                                    height="140">
+                                    height="140" class="c-svg">
                                     <g>
                                         <g>
                                             <g>
@@ -131,7 +131,7 @@
                                     </g>
                                 </svg>
                                 <h3>
-                                    <span class="c-temperatuur">Temperatuur</span>
+                                    <span class="c-temperatuur">Temprature</span>
                                     <div class="js-temperatuur c-temperatuur">
                                         18°C
                                     </div>
@@ -140,12 +140,12 @@
                         </article>
                     </div>
 
-                    <div class="o-layout__item u-1-of-3-bp2">
+                    <div class="o-layout__item u-1-of-3-bp3">
                         <article class="tile">
                             <div class="tile-header">
                                 
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" width="100px" height="140px" viewBox="0 0 32 32" version="1.1">
+                                    xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" class="c-svg" width="100px" height="140px" viewBox="0 0 32 32" version="1.1">
                                     <!-- Generator: Sketch 3.0.3 (7891) - http://www.bohemiancoding.com/sketch -->
                                     <title>icon 114 lock</title>
                                     <desc>Created with Sketch.</desc>
@@ -159,7 +159,7 @@
                                     </g>
                                 </svg>
                                 <h3>
-                                    <span class="c-temperatuur">Actieve Sluiting</span>
+                                    <span class="c-temperatuur">Active Lock</span>
                                     <div class="js-sluiting c-temperatuur">Open</div>
                                 </h3>
                             </div>
@@ -168,10 +168,10 @@
                     </div>
 
 
-                    <div class="o-layout__item u-1-of-3-bp2">
+                    <div class="o-layout__item u-1-of-3-bp3">
                         <article class="tile">
                             <div class="tile-header">
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                <svg class="c-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                     version="1.1" x="0px" y="0px" viewBox="0 0 1000 1000"
                                     enable-background="new 0 0 1000 1000" xml:space="preserve" width="100" height="140">
                                     <metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
@@ -183,7 +183,7 @@
                                     </g>
                                 </svg>
                                 <h3>
-                                    <span class="c-temperatuur">Laatste Alcoholpercentage:</span>
+                                    <span class="c-temperatuur">Last Alcoholpercentage:</span>
                                     <div class="js-alcohol c-temperatuur">
                                         2.51%
                                     </div>
@@ -197,26 +197,31 @@
         <section class="o-row o-row--md u-max-width-md">
             <div class="o-container">
                 <div>
-                    <h3 class="js-name u-color--dark">Lock Device</h3>
-                
-                    <input type="radio" id="shankar" name="id" value="933210265772" >
-                    <label for="shankar">Shankar</label><br>
-                    <input type="radio" id="willy" name="id" value="453047185099">
-                    <label for="willy">willy</label><br>
-                    <input type="radio" id="JP" name="id" value="648955705971">
-                    <label for="JP">JP</label><br>
+                    <div>
+                        <h3 class="js-name u-color--dark">Lock Device</h3>
+                        <p class="u-text">Chose a user and a locktime to keep the user from using the lock.</p>
+                    </div>
+                    <div class="o-layout o-layout--align-center">
+                        <input type="radio" id="shankar" name="id" value="933210265772" >
+                        <label for="shankar" class="u-text">Shankar</label><br>
+                        <input type="radio" id="willy" name="id" value="453047185099">
+                        <label for="willy" class="u-text">Willy</label><br>
+                        <input type="radio" id="JP" name="id" value="648955705971">
+                        <label for="JP" class="u-text">JP</label><br>
+                    </div>
                 </div>
-                <div class="o-layout o-layout--gutter-xl  o-layout--justify-space-around">
-                    
-                    <div class="o-layout__item u-1-of-3-bp3">
-                        <button class="js-lock u-button" data-locktime="3">Lock 3H</button>
-                    </div>
-                    <div class="o-layout__item u-1-of-3-bp3">
-                        <button class="js-lock u-button" data-locktime="6">Lock 6H</button>
-                    </div>
-                    <div class="o-layout__item u-1-of-3-bp3">
-                        <button class="js-lock u-button" data-locktime="0">Unlock </button>
-                    </div>
+                <div class="o-layout o-layout--align-center o-layout--justify-center">
+                    <!-- <div class="tiles"> -->
+                        <div class="o-layout__item u-1-of-3-bp3">
+                            <button class="js-lock u-button" data-locktime="3">Lock 3H</button>
+                        </div>
+                        <div class="o-layout__item u-1-of-3-bp3">
+                            <button class="js-lock u-button" data-locktime="6">Lock 6H</button>
+                        </div>
+                        <div class="o-layout__item u-1-of-3-bp3">
+                            <button class="js-lock u-button" data-locktime="0">Unlock </button>
+                        </div>
+                    <!-- </div> -->
                 </div>
             </div>
         </section>
