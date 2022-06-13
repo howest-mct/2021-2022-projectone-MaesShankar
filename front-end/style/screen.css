@@ -19,7 +19,7 @@
 \*------------------------------------*/
 
 /*
-    Generic: Page
+    : Page
     ---
     Global page styles + universal box-sizing:
 */
@@ -534,7 +534,7 @@ span:last-child {
     color: #202024;
 }
 .c-svg{
-    color: #fff;
+    fill: #fff;
 }
 
 /* .c-cell{

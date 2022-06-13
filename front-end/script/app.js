@@ -59,12 +59,27 @@ const error_get=function(){
 const fill_table=function(jsonObject){
     // console.log(jsonObject)
     let htmlString=``;
+    let actie=''
+    let device=''
     for(let data of jsonObject){
         // console.log(data)
+        if(data.ActieID==1){
+          actie='Relais'
+        }else if(data.ActieID==2){
+          actie='LCD'
+        }else{
+          actie='No Action'
+        }
+
+        if(data.DeviceID==1){
+          device='Alcohol MQ-3'
+        }else if(data.DeviceID==2){
+          device='Temperatuursensor'
+        }
+
         htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-        <td class="c-cell_second">${data.HistoriekID}</td>
-        <td class="c-cell_second">${data.DeviceID}</td>
-        <td class="c-cell_second">${data.ActieID}</td>
+        <td class="c-cell_second">${device}</td>
+        <td class="c-cell_second">${actie}</td>
         <td class="c-cell_second_special">${data.Datum}</td>
         <td class="c-cell_second">${data.Waarde}</td>;   
         <td class="c-cell_second">${data.Commentaar}</td>
@@ -75,13 +90,19 @@ const fill_table=function(jsonObject){
 const fill_table_users=function(jsonObject){
   // console.log(jsonObject)
     let htmlString=''
+    let access=''
     for(let data of jsonObject){
+      if(data.Toegang==1){
+        access='Yes'
+      }else{
+        access='No'
+      }
       htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
         <td class="c-cell_second">${data.UserID}</td>
         <td class="c-cell_second">${data.Naam}</td>
         <td class="c-cell_second">${data.Voornaam}</td>
         <td class="c-cell_second">${data.RFID}</td>
-        <td class="c-cell_second">${data.Toegang}</td>
+        <td class="c-cell_second">${access}</td>
 
       </tr>`
     }
@@ -91,17 +112,27 @@ const fill_table_users=function(jsonObject){
 const fill_table_alc=function(jsonObject){
     console.log(jsonObject)
     let htmlString=``;
+    let user=''
     for(let data of jsonObject){
+       for(let data of jsonObject){
+        // console.log(data)
+        if(data.UserID==1){
+          user='Shankar'
+        }else if(data.UserID==2){
+          user='Willy'
+        }else{
+          user='JP'
+        }
         // console.log(data)
         htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-        <td class="c-cell_second">${data.AlcHistoriekID}</td>
-        <td class="c-cell_second">${data.UserID}</td>
+        <td class="c-cell_second">${user}</td>
         <td class="c-cell_second">${data.ADatum}</td>
-        <td class="c-cell_second_special">${data.AWaarde}</td>
-        
+        <td class="c-cell_second_special">${data.AWaarde}%</td>
+      
         </tr>`;
     }
     document.querySelector('.js-table-alc').innerHTML=htmlString
+}
 }
 //Event listner
 const listenToLockbuttons = function () {

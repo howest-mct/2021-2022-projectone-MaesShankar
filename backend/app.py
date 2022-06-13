@@ -27,7 +27,7 @@ ip=str(ipfull.decode(encoding='utf-8'))[:14]
 
 
 forbidden_list=[]
-dataTimer=0
+dataTimer=60
 temperatuur=0
 alcohol=0
 lock=0
@@ -338,7 +338,7 @@ def contactor(tijd,id):
         time.sleep(5)
         GPIO.output(relais,GPIO.LOW)
         DataRepository.update_toegang('0',id)
-     
+        show_ip()
 
 def rfid():
     global reader
