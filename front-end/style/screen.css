@@ -158,6 +158,14 @@ a {
     text-decoration: none;
 }
 
+a .u-learn{
+        color: white;
+        transition: all .1s ease-in-out;
+        text-decoration:none;
+        font-size: 20px;
+
+}
+
 a:visited,
 a:active {
     color: #3385ff;
@@ -182,7 +190,7 @@ span:last-child {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 42px;
+    
     height: 42px;
     border-radius: 50%;
     overflow: hidden;
@@ -802,6 +810,7 @@ tb .u-container_design {
 .u-color--dark {
     color: black;
 }
+
 
 .u-button {
     display: block;

@@ -1,3 +1,4 @@
+from logging import shutdown
 import time
 from RPi import GPIO
 from helpers.klasseknop import Button
@@ -147,10 +148,15 @@ def onewire():
 def MeetAlcData():
     while True:
         klasse=MCPclass()
-        global alcohol
         data=klasse.read_channel(1)
-        alcohol=round((data/1023)*100,2) 
-        print(f"alcohol:{alcohol}")
+        alcohol=round((data/1024)*3.3,2) 
+        RS_gas = ((5.0 * 2000)/alcohol) - 2000
+        R0 = 16000
+        ratio = RS_gas/R0 # ratio = RS/R0
+        x = 0.4*ratio   
+        global BAC
+        BAC = pow(x,-1.431)/20  #BAC in mg/L
+        print(f"alcohol:{round(BAC,2)}")
         klasse.closespi()
         time.sleep(1)
 
@@ -231,8 +237,8 @@ def MeetAlcohol():
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
         time.sleep(1)
-        lcd_string("Kan niet scannen.",LCD_LINE_1)
-        lcd_string("Timeout",LCD_LINE_2)
+        lcd_string("Abort",LCD_LINE_1)
+        lcd_string(f"Restricted for:{control}",LCD_LINE_2)
         time.sleep(2)
         startAlc = not startAlc
         show_ip()
@@ -245,8 +251,8 @@ def MeetAlcohol():
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
         time.sleep(1)
-        lcd_string("Blaas 5 seconden",LCD_LINE_1)
-        lcd_string("In de sensor",LCD_LINE_2)
+        lcd_string("Blow 5 seconds",LCD_LINE_1)
+        lcd_string("In the sensor",LCD_LINE_2)
         setup_gpio()
         GPIO.output(buzzer,GPIO.HIGH)
         time.sleep(0.5)
@@ -263,19 +269,20 @@ def MeetAlcohol():
         hoogstalcohol=0
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
-        lcd_string("Blijven blazen!",LCD_LINE_1)
+        lcd_string("Keep going!",LCD_LINE_1)
         GPIO.output(buzzer,GPIO.HIGH)
         for i in range(0,6):
-            global alcohol
-            if alcohol>hoogstalcohol:
-                hoogstalcohol=alcohol
-            lcd_string(f"{i} s ; {hoogstalcohol}%",LCD_LINE_2)
+            global BAC
+            if BAC>hoogstalcohol:
+                hoogstalcohol=round(BAC,2)
+            lcd_string(f"{i} s ; {hoogstalcohol}mg/l",LCD_LINE_2)
             time.sleep(1)
         GPIO.output(buzzer,GPIO.LOW)
         time.sleep(0.5)
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
-        lcd_string(f"Resultaat: {hoogstalcohol}%",LCD_LINE_1)
+        lcd_string(f"Result:",LCD_LINE_1)
+        lcd_string(f"{hoogstalcohol}mg/l",LCD_LINE_2)
         time.sleep(2)
         DeviceID=1
         ActieID=3
@@ -291,14 +298,14 @@ def MeetAlcohol():
         AWaarde=Waarde
         DataRepository.create_alc_log(UserID,ADatum,AWaarde)
         socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
-        print(f"Resultaat: {hoogstalcohol}")
+        print(f"Resultaat: {hoogstalcohol}mg/l")
         startAlc = not startAlc
         check_alcohol(hoogstalcohol,id)
 def check_alcohol(percentage,id):
-    if percentage >=48.88:      # 400 (limit)/1023*100
+    if percentage >=0.30:      # 400 (limit)/1023*100
         DataRepository.update_toegang('0',id)
         contactor('3',id)
-    elif percentage>=70.00:
+    elif percentage>=0.40:
         DataRepository.update_toegang('0',id)
         contactor('6',id)
     else:
@@ -318,8 +325,8 @@ def contactor(tijd,id):
         elif int(id)==453047185099:
             uitTimeW=40
         GPIO.output(relais,GPIO.LOW)
-        lcd_string("Geblokkeerd",LCD_LINE_1)
-        lcd_string("Voor 3 uur",LCD_LINE_2)
+        lcd_string("Blocked",LCD_LINE_1)
+        lcd_string("For 3h",LCD_LINE_2)
         time.sleep(2)
         show_ip()
     elif str(tijd) == '6':
@@ -329,11 +336,13 @@ def contactor(tijd,id):
             uitTimeW=360
 
         GPIO.output(relais,GPIO.LOW)
-        lcd_string("U mag niet rijden",LCD_LINE_1)
-        lcd_string("Voor 6 uur",LCD_LINE_2)
-        time.sleep(1)
+        lcd_string("Blocked",LCD_LINE_1)
+        lcd_string("For 6h",LCD_LINE_2)
+        time.sleep(2)
         show_ip()
     elif str(tijd) == '0' and toegang==1:
+        lcd_string("U Can Drive",LCD_LINE_1)
+        lcd_string("Travel Safe",LCD_LINE_2)
         GPIO.output(relais,GPIO.HIGH)
         time.sleep(5)
         GPIO.output(relais,GPIO.LOW)
@@ -351,11 +360,13 @@ def rfid():
     return id
 
 def Shutdown(String):
-    lcd_string("Shut Down",LCD_LINE_1)
-    lcd_string("Farewell!",LCD_LINE_2)
+    lcd_string("Shutting Down",LCD_LINE_1)
+    lcd_string("Goodbye!",LCD_LINE_2)
     time.sleep(2)
-    os.system("sudo shutdown -h now")
-    # pass
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    # os.system("sudo shutdown -h now")
+
 
 
 
@@ -383,6 +394,12 @@ def read_alc_historiek():
     result = DataRepository.read_alc_history()
     return jsonify(result)
 
+@app.route('/api/v1/alchistory/<id>/', methods=['GET'])
+def read_alc_historiek_user(id):
+    print('Get users')
+    result = DataRepository.read_alc_history_user(id)
+    return jsonify(result)
+
 #SocketIO
 @socketio.on('connect')
 def initial_connection():
@@ -393,10 +410,10 @@ def initial_connection():
 def LockTime(time,id):
     if time=='3':
         print(f'tijd {time} id={id}')
-        check_alcohol(3,id)
+        check_alcohol(50,id)
     elif time=='6':
         print(f'tijd {time} id={id}')
-        check_alcohol(6,id)
+        check_alcohol(71,id)
     elif time=='0':
         print(f'tijd {time} id={id}')
         check_alcohol(0,id)

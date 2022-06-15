@@ -10,11 +10,31 @@ const getHistory = function () {
   const url = lanIP + '/api/v1/history/';
   console.log(url)
   handleData(url, fill_table,error_get);
+  
 };
 const getAlcHistory = function () {
-  const url = lanIP + '/api/v1/alchistory/';
+  const url = lanIP + `/api/v1/alchistory/`;
   console.log(url)
   handleData(url, fill_table_alc,error_get);
+  for(const radiobutton of document.querySelectorAll('input[name="id"]')){
+        radiobutton.addEventListener('click',function(){
+          if(radiobutton.checked){
+            radioid=radiobutton.getAttribute('value')
+            console.log(radioid)
+            if(radioid!='0'){
+              const url = lanIP + `/api/v1/alchistory/${radioid}/`;
+              console.log(url)
+              handleData(url, fill_table_alc,error_get);
+            }else if(radioid=='0'){
+              const url = lanIP + `/api/v1/alchistory/`;
+              console.log(url)
+              handleData(url, fill_table_alc,error_get);
+
+            }
+            
+          }
+        });
+      }
 };
 const getUsers = function () {
   const url = lanIP + '/api/v1/users/';
@@ -23,7 +43,7 @@ const getUsers = function () {
 };
 // Show
 const ShowAlcohol=function(alcohol){
-  document.querySelector('.js-alcohol').innerHTML=`<p class="c-temperatuur js-alcoholpercentage">${alcohol}%</p>`
+  document.querySelector('.js-alcohol').innerHTML=`<p class="c-temperatuur js-alcoholpercentage">${alcohol}mg/l</p>`
 }
 const ShowTemperatuur=function(temperatuur){
   console.log(temperatuur)
@@ -127,7 +147,7 @@ const fill_table_alc=function(jsonObject){
         htmlString +=` <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
         <td class="c-cell_second">${user}</td>
         <td class="c-cell_second">${data.ADatum}</td>
-        <td class="c-cell_second_special">${data.AWaarde}%</td>
+        <td class="c-cell_second_special">${data.AWaarde}mg/l</td>
       
         </tr>`;
     }

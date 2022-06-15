@@ -20,6 +20,12 @@ class DataRepository:
         return Database.get_rows(sql)
     
     @staticmethod
+    def read_alc_history_user(id):
+        sql="SELECT * FROM AlcoholHistoriek WHERE UserID=%s ORDER BY AlcHistoriekID DESC LIMIT 50;"
+        params=[id]
+        return Database.get_rows(sql,params)
+
+    @staticmethod
     def read_users():
         sql="SELECT * FROM Users ORDER BY UserID ASC"
         return Database.get_rows(sql)
