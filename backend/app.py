@@ -260,7 +260,7 @@ def MeetAlcohol():
     control=0
     if(id==933210265772):
         control=uitTimeS
-    elif(id==648955705971)
+    elif(id==648955705971):
         control=uitTimeJ
     else:
         control=uitTimeW
@@ -335,7 +335,7 @@ def MeetAlcohol():
         startAlc = False
         check_alcohol(hoogstalcohol,id)
 def check_alcohol(percentage,id):
-    if percentage >=0.30:      # 400 (limit)/1023*100
+    if percentage >=0.30:      
         DataRepository.update_toegang('0',id)
         contactor('3',id)
     elif percentage>=0.40:
@@ -348,6 +348,7 @@ def check_alcohol(percentage,id):
 def contactor(tijd,id):
     global uitTimeS 
     global uitTimeW
+    global uittimeJ
     # setup_gpio()
     list_forbidden=DataRepository.read_toegang(id)
     dict_forbidden=list_forbidden[0]
@@ -584,7 +585,7 @@ if __name__ == '__main__':
     try:
         lcd_string("Looking for IP ",LCD_LINE_1)
         lcd_string("Loading...",LCD_LINE_2)
-        while len(ip)< 7 and ip[0:1] is not 1:
+        while len(ip)< 7 and ip[0:1] != 1:
             ipfull=str(check_output(['ip','a']))
             min=int(ipfull.find('172.30.252'))
             ip=str(ipfull[min:min +13])
