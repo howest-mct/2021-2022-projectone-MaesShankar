@@ -58,3 +58,16 @@ class DataRepository:
         sql = "INSERT INTO AlcoholHistoriek(UserID,ADatum,AWaarde) Values(%s,%s,%s);"
         params = [UserID,ADatum,AWaarde]
         return Database.execute_sql(sql, params)
+    
+    @staticmethod
+    def getAwaardes():
+        sql = 'SELECT AWaarde FROM AlcoholHistoriek  ORDER BY AlcHistoriekID desc LIMIT 8'
+        return Database.get_rows(sql)
+    @staticmethod
+    def gettemps():
+        sql = 'SELECT Waarde FROM Historiek WHERE DeviceID=2 order by Datum desc LIMIT 8;'
+        return Database.get_rows(sql)
+    @staticmethod
+    def getdata():
+        sql = 'SELECT Datum FROM Historiek WHERE DeviceID=2 order by Datum desc LIMIT 8;'
+        return Database.get_rows(sql)

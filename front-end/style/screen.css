@@ -354,7 +354,10 @@ span:last-child {
     contains the basic structural elements, but classes should be complemented
     with width utilities
 */
-
+#chart {
+    max-width: 650px;
+    margin: 35px auto;
+}
 .o-layout {
     display: flex;
     flex-wrap: wrap;
@@ -539,7 +542,7 @@ span:last-child {
 }
 .c-temperatuur-sm {
     font-size: 30px;
-    color: #202024;
+    color: white;
 }
 .c-svg{
     fill: #fff;
@@ -599,7 +602,7 @@ span:last-child {
     display: none;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1200px) {
     .c-header__nav {
         display: block;
     }
@@ -764,7 +767,7 @@ span:last-child {
     Utility classes to put specific margins and paddings onto elements
 */
 table {
-
+    
     display:table;
     border-collapse: collapse;
     border-spacing: 0;
@@ -773,14 +776,16 @@ table {
     font-family: sans-serif;
     width: 100%;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-    overflow-x:scroll;
+    overflow: auto;
     grid-template-columns: auto auto;
 }
-/* 
-@media (min-width: 375px) {
+
+@media (min-width: 300px) {
     table {
+        table-layout:fixed;
+        font-size: 12px;
     }
-} */
+}
 
 thead tr {
     background-color: #3385ff;
@@ -790,7 +795,9 @@ thead tr {
 
 th,
 tr {
-    padding: 12px 15px;
+    word-wrap:break-word;
+    width: 110%;
+    padding: 10px 15px 10px 8px;
 }
 
 tbody tr {
@@ -802,6 +809,9 @@ tb .u-container_design {
     border-color: #000;
     color: #3385ff;
 }
+
+
+
 
 .u-color-XXX-light {
     color: white;
@@ -821,6 +831,18 @@ tb .u-container_design {
     padding: 20px 35px;
     min-width: fit-content;
     min-height: fit-content;
+}
+.u-buttonshut{
+    display: block;
+    background-color: #4F95FF;
+    border-color: #2E77E6;
+    color: white;
+    font-weight: bold;
+    padding: 10px 17.5px;
+    min-width: fit-content;
+    min-height: fit-content;
+    border-radius: 8px;
+    margin-right: 20px;
 }
 .u-text{
     font-size: 16px;

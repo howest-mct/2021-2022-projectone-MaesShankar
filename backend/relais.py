@@ -1,29 +1,60 @@
-import spidev
+import smbus
 import time
-spi = spidev.SpiDev()
-class MCPclass:
-    def __init__(self,bus=0,device=1):
-        global spi
-        spi.open(bus,device)
-        spi.max_speed_hz = 10 ** 5
+I2C_ADDR  = 0x27 # I2C device address
+LCD_WIDTH = 16   # Maximum characters per line
 
-    def read_channel(self,ch):
-        spidata = spi.xfer2([1,(8|ch)<<4,0])
-        return ((spidata[1] & 3) << 8) + spidata[2]
+# Define some device constants
+LCD_CHR = 1 # Mode - Sending data
+LCD_CMD = 0 # Mode - Sending command
 
-    def closespi(self):
-        global spi
-        spi.close()
+LCD_LINE_1 = 0x80 # LCD RAM address for the 1st line
+LCD_LINE_2 = 0xC0 # LCD RAM address for the 2nd line
 
-while True:
-    klasse=MCPclass()
-    data=klasse.read_channel(1)
-    alcohol=round((data/1024)*3.3,2) 
-    RS_gas = ((5.0 * 2000)/alcohol) - 2000
-    R0 = 16000
-    ratio = RS_gas/R0 # ratio = RS/R0
-    x = 0.4*ratio   
-    BAC = pow(x,-1.431)/20  #BAC in mg/L
-    print(f"alcohol:{round(BAC,2)}")
-    klasse.closespi()
-    time.sleep(1)
+LCD_BACKLIGHT  = 0x08  # On 0X08 / Off 0x00
+
+ENABLE = 0b00000100 # Enable bit
+
+E_PULSE = 0.0005
+E_DELAY = 0.0005
+
+bus = smbus.SMBus(1) # Rev 2 Pi uses 1
+
+
+
+def lcd_init():
+  lcd_byte(0x33,LCD_CMD) # 110011 Initialise
+  lcd_byte(0x32,LCD_CMD) # 110010 Initialise
+  lcd_byte(0x06,LCD_CMD) # 000110 Cursor move direction
+  lcd_byte(0x0C,LCD_CMD) # 001100 Display On,Cursor Off, Blink Off
+  lcd_byte(0x28,LCD_CMD) # 101000 Data length, number of lines, font size
+  lcd_byte(0x01,LCD_CMD) # 000001 Clear display
+  time.sleep(E_DELAY)
+
+def lcd_byte(bits, mode):
+
+  bits_high = mode | (bits & 0xF0) | LCD_BACKLIGHT
+  bits_low = mode | ((bits<<4) & 0xF0) | LCD_BACKLIGHT
+
+  bus.write_byte(I2C_ADDR, bits_high)
+  lcd_toggle_enable(bits_high)
+
+  bus.write_byte(I2C_ADDR, bits_low)
+  lcd_toggle_enable(bits_low)
+
+def lcd_toggle_enable(bits):
+  time.sleep(E_DELAY)
+  bus.write_byte(I2C_ADDR, (bits | ENABLE))
+  time.sleep(E_PULSE)
+  bus.write_byte(I2C_ADDR,(bits & ~ENABLE))
+  time.sleep(E_DELAY)
+
+def lcd_string(message,line):
+  message = message.ljust(LCD_WIDTH," ")
+  lcd_byte(line, LCD_CMD)
+  for i in range(LCD_WIDTH):
+    lcd_byte(ord(message[i]),LCD_CHR)
+
+
+lcd_string("Welcome ",LCD_LINE_1)
+lcd_string("Alco-CarLock",LCD_LINE_2)
+

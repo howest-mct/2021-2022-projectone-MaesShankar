@@ -6,6 +6,7 @@ import threading
 from subprocess import check_output
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
+import socket
 from flask import Flask, jsonify
 from repositories.DataRepository import DataRepository
 from selenium import webdriver
@@ -23,8 +24,7 @@ relais=24
 buzzer=21
 start=23
 stop=18
-ipfull=check_output(['hostname','--all-ip-addresses'])
-ip=str(ipfull.decode(encoding='utf-8'))[:14]
+
 
 
 forbidden_list=[]
@@ -100,6 +100,12 @@ def show_ip():
 
 # Callbacks
 def callbackALC(String):
+    DeviceID=4
+    ActieID=2
+    Datum=datetime.now()
+    Waarde=float(temperatuur)
+    Commentaar='Temperatuursmeting'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
     global startAlc
     startAlc = not startAlc
     print(startAlc)
@@ -156,7 +162,7 @@ def MeetAlcData():
         x = 0.4*ratio   
         global BAC
         BAC = pow(x,-1.431)/20  #BAC in mg/L
-        print(f"alcohol:{round(BAC,2)}")
+        # print(f"alcohol:{round(BAC,2)}")
         klasse.closespi()
         time.sleep(1)
 
@@ -165,7 +171,7 @@ def dataTemp():
         global temperatuur
         global dataTimer
         if dataTimer==60:
-            print("Thread")
+            # print("Thread")
             DeviceID=2
             ActieID=3
             Datum=datetime.now()
@@ -204,12 +210,14 @@ def loop_main():
             socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
             contactor('0','933210265772')
             time.sleep(1)
+            uitTimeS=0
 
             
         if uitTimeW<=0:
             socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
             contactor('0','453047185099')
             time.sleep(1)
+            uitTimeW=0
 
 def MeetAlcohol():
     global startAlc
@@ -298,6 +306,7 @@ def MeetAlcohol():
         AWaarde=Waarde
         DataRepository.create_alc_log(UserID,ADatum,AWaarde)
         socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
+        global temperatuur
         print(f"Resultaat: {hoogstalcohol}mg/l")
         startAlc = not startAlc
         check_alcohol(hoogstalcohol,id)
@@ -334,7 +343,6 @@ def contactor(tijd,id):
             uitTimeS=360
         elif int(id)==453047185099:
             uitTimeW=360
-
         GPIO.output(relais,GPIO.LOW)
         lcd_string("Blocked",LCD_LINE_1)
         lcd_string("For 6h",LCD_LINE_2)
@@ -357,9 +365,21 @@ def rfid():
     print(id)
     print(text)
     reader.close_spi()
+    DeviceID=3
+    ActieID=3
+    Datum=datetime.now()
+    Waarde=float(temperatuur)
+    Commentaar='RFID'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
     return id
 
 def Shutdown(String):
+    DeviceID=5
+    ActieID=2
+    Datum=datetime.now()
+    Waarde=float(temperatuur)
+    Commentaar='Shutdown'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
     lcd_string("Shutting Down",LCD_LINE_1)
     lcd_string("Goodbye!",LCD_LINE_2)
     time.sleep(2)
@@ -367,8 +387,34 @@ def Shutdown(String):
     lcd_string("",LCD_LINE_2)
     # os.system("sudo shutdown -h now")
 
-
-
+def Shutter():
+    DeviceID=5
+    ActieID=2
+    Datum=datetime.now()
+    Waarde=float(temperatuur)
+    Commentaar='Shutdown'
+    DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    lcd_string("Shutting Down",LCD_LINE_1)
+    lcd_string("Goodbye!",LCD_LINE_2)
+    time.sleep(2)
+    lcd_string("",LCD_LINE_1)
+    lcd_string("",LCD_LINE_2)
+    # os.system("sudo shutdown -h now")
+def grafiekdata():
+    while True:
+        jsontemp=DataRepository.gettemps()
+        jsonalc=DataRepository.getAwaardes()
+        jsondata=DataRepository.getdata()
+        templist=[]
+        alclist=[]
+        # print(jsontemp)
+        for i in range(0,8):
+            templist.append(jsontemp[i]['Waarde'])
+            alclist.append(jsonalc[i]['AWaarde'])
+            time.sleep(0.5)
+        # print(templist)
+        # print(alclist)
+        socketio.emit('Chart', {'temp': templist,'alc': alclist})
 
 # API ENDPOINTS
 
@@ -379,24 +425,24 @@ def hallo():
 
 @app.route('/api/v1/history/', methods=['GET'])
 def read_history():
-    print('Get History')
+    # print('Get History')
     result = DataRepository.read_history()
     return jsonify(result)
 
 @app.route('/api/v1/users/', methods=['GET'])
 def read_users():
-    print('Get users')
+    # print('Get users')
     result = DataRepository.read_users()
     return jsonify(result)
 @app.route('/api/v1/alchistory/', methods=['GET'])
 def read_alc_historiek():
-    print('Get users')
+    # print('Get users')
     result = DataRepository.read_alc_history()
     return jsonify(result)
 
 @app.route('/api/v1/alchistory/<id>/', methods=['GET'])
 def read_alc_historiek_user(id):
-    print('Get users')
+    # print('Get users')
     result = DataRepository.read_alc_history_user(id)
     return jsonify(result)
 
@@ -417,6 +463,12 @@ def LockTime(time,id):
     elif time=='0':
         print(f'tijd {time} id={id}')
         check_alcohol(0,id)
+@socketio.on('F2B_shutdown')
+def shutter():
+        print('Shutdown')
+        Shutter()
+
+
 #ChromeThread
 def start_chrome_kiosk():
     import os
@@ -469,27 +521,41 @@ def thread():
     print("**** Starting Loop ****")
     Threads = threading.Thread(target=loop_main, args=(), daemon=True)
     Threads.start()
-
+def threadgrafiek():
+    print("**** Starting graf ****")
+    Threadgr = threading.Thread(target=grafiekdata, args=(), daemon=True)
+    Threadgr.start()
 # ANDERE FUNCTIES
 
 
 if __name__ == '__main__':
     setup_gpio()
     lcd_init()
+    ip=''
     GPIO.output(relais,GPIO.LOW)
     try:
-        lcd_string("Welkom Bij",LCD_LINE_1)
-        lcd_string("Alco-CarLock",LCD_LINE_2)
-        time.sleep(3)
-        show_ip()
-        # setup_gpio()
-        start_chrome_thread()
-        start_temp_thread()
-        start_tempData_thread()
-        start_alcohol_thread()
-        thread()
-        print("**** Starting APP ****")
-        socketio.run(app, debug=False, host='0.0.0.0',port=5000)
+        lcd_string("Looking for IP ",LCD_LINE_1)
+        lcd_string("Loading...",LCD_LINE_2)
+        while len(ip)< 7 and ip[0:1] is not 1:
+            ipfull=str(check_output(['ip','a']))
+            min=int(ipfull.find('172.30.252'))
+            ip=str(ipfull[min:min +13])
+            # print(ip)
+            time.sleep(2)
+        if len(ip)>7:
+            lcd_string("Welcome!! ",LCD_LINE_1)
+            lcd_string("Alco-CarLock",LCD_LINE_2)
+            time.sleep(3)
+            show_ip()
+            # setup_gpio()
+            # start_chrome_thread()
+            start_temp_thread()
+            start_tempData_thread()
+            start_alcohol_thread()
+            thread()
+            threadgrafiek()
+            print("**** Starting APP ****")
+            socketio.run(app, debug=False, host='0.0.0.0',port=5000)
                 
     except KeyboardInterrupt:
         print ('KeyboardInterrupt exception is caught')
