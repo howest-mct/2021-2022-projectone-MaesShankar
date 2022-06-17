@@ -1,14 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>History</title>
-    <link rel="stylesheet" href="style/screen.css" />
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
-        integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU"
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Project One: Alco-Carlock</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="style/screen.css" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet" />
+    <link rel="manifest" href="./style/manifest.json">
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+        integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
         crossorigin="anonymous"></script>
     <script src="script/dataHandler.js"></script>
     <script src="script/app.js"></script>
@@ -40,8 +43,6 @@
                                 <a href="historyalc.html" class="c-nav__link ">Alcohol Measurements</a>
                             </li>
                             <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
-                            </li>
-                            <li class="c-nav__item"><button class="u-buttonshut js-shutdown">Shutdown</button></li>
                         </ul>
                     </nav>
                 </div>
@@ -55,50 +56,26 @@
                 </div>
             </div>
         </header>
+    
         <section class="o-row o-row--md u-max-width-page">
-            <div class="c-container">
-                <div class="o-section o-section-lg">
+            <div class="o-container ">
+                <h2 class="u-color--dark">Info Page</h2>
+                <h3>Alcohol Restrictions</h3>
+                <p class="u-text">The lock will be activated when you have more then 0.28mg/l alcohol in your blood. This is circa 0.7 promille. From that point 
+                    you are not allowed to drive for about 3 hours. When you have more then 0.40mg/l alcohol in your blood you are restricted for 6h. This is about 0.9 promille.
+                </p>
 
+                <h3 >
+                    Belgian Fines For Drunk Driving.
+                </h3>
+                <ul class="u-text">
+                    <li>0.28mg/l - 0.40mg/l: 200€ - 4.000€</li>
+                    <li>>0.40mg/l : 1.600€ - 16.000€</li>
+                    <li>Unable or refusing to take an alcohol test: 1.600€ - 16.000€</li>
+                </ul>
 
-                    <div id="history" class="o-layout.table o-layout--gutter-sm o-layout--justify-center">
-                        <div class="o-layout__item">
-                            <h3 id="History" class="u-color--dark">Action History</h3>
-                            <!-- <div class="o-layout--gutter-sm o-layout--align-center">
-                            <div class="o-layout__item u-1-of-2-bp3">
-                                <button class="u-button">AlcoholHistoriek</button>
-                            </div>
-                            <div class="o-layout__item u-1-of-2-bp3">
-                                <button class="u-button">Historiek</button>
-                            </div>
-                        </div> -->
-                            
-                            <table name="Historiek">
-                                <thead class="js-table-head">
-                                    <tr class="c-row o-layout__item o-layout--gutter-lg">
-                                       
-                                        <th class="c-cell">Device</th>
-                                        <th class="c-cell">Action</th>
-                                        <th class="c-cell">Date</th>
-                                        <th class="c-cell">Value</th>
-                                        <th class="c-cell">Comment</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="js-table-historiek">
-                                    <tr class="c-row u-table o-layout__item o-layout--gutter-lg">
-                                        <td class="c-cell_second">Data</td>
-                                        <td class="c-cell_second">Data</td>
-                                        <td class="c-cell_second">Data</td>
-                                        <td class="c-cell_second">Data</td>
-                                        <td class="c-cell_second">Data</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
-    </div>
     <aside class="c-mobile-nav">
         <div class="c-mobile-nav__bg"></div>
         <div class="c-mobile-nav__body">
@@ -116,7 +93,6 @@
             <div class="c-mobile-nav__nav c-mobile-nav__nav--main">
                 <nav class="c-nav">
                     <ul class="o-list c-nav__list">
-                        
                         <li class="c-nav__item">
                             <a href="history.html" class="c-nav__link ">Actions</a>
                         </li>
@@ -124,11 +100,11 @@
                             <a href="historyalc.html" class="c-nav__link ">Alcohol Measurements</a>
                         </li>
                         <li class="c-nav__item"><a href="users.html" class="c-nav__link">Users</a></li>
-                        </li>
-                        <li class="c-nav__item"><button class="u-buttonshut js-shutdown">Shutdown</button></li>
                     </ul>
                 </nav>
             </div>
         </div>
     </aside>
 </body>
+
+</html>
