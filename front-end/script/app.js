@@ -1,26 +1,26 @@
 'use strict';
 
 const lanIP = `http://${window.location.hostname}:5000`;
-console.log(lanIP)
+// console.log(lanIP)
 const socketio = io(`${lanIP}`);
 let radioid = 0
 // Get
 
 const getHistory = function () {
   const url = lanIP + '/api/v1/history/';
-  console.log(url)
+  // console.log(url)
   handleData(url, fill_table, error_get);
 
 };
 const getAlcHistory = function () {
   const url = lanIP + `/api/v1/alchistory/`;
-  console.log(url)
+  // console.log(url)
   handleData(url, fill_table_alc, error_get);
   for (const radiobutton of document.querySelectorAll('input[name="id"]')) {
     radiobutton.addEventListener('click', function () {
       if (radiobutton.checked) {
         radioid = radiobutton.getAttribute('value')
-        console.log(radioid)
+        // console.log(radioid)
         if (radioid != '0') {
           const url = lanIP + `/api/v1/alchistory/${radioid}/`;
           console.log(url)
@@ -38,7 +38,7 @@ const getAlcHistory = function () {
 };
 const getUsers = function () {
   const url = lanIP + '/api/v1/users/';
-  console.log(url)
+  // console.log(url)
   handleData(url, fill_table_users, error_get);
 };
 // Show
@@ -46,7 +46,7 @@ const ShowAlcohol = function (alcohol) {
   document.querySelector('.js-alcohol').innerHTML = `<p class="c-temperatuur js-alcoholpercentage">${alcohol}mg/l</p>`
 }
 const ShowTemperatuur = function (temperatuur) {
-  console.log(temperatuur)
+  // console.log(temperatuur)
   document.querySelector('.js-temperatuur').innerHTML = `<p class="c-temperatuur js-temperatuur">${temperatuur}°C</p>`
 }
 const showSluiting = function (locktime, id) {
@@ -214,7 +214,7 @@ const listenToTempSocket = function () {
   });
   socketio.on('Chart',function(parameter){
     console.log('socket chart')
-    console.log(parameter)
+    // console.log(parameter)
     showChart(parameter.temp,parameter.alc)
   })
 }

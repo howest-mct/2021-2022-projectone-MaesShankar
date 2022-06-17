@@ -36,6 +36,7 @@ lock=0
 startAlc=False
 uitTimeS=0
 uitTimeW=0
+uitTimeJ=0
 #LCD
 
 I2C_ADDR  = 0x27 # I2C device address
@@ -196,6 +197,7 @@ def loop_main():
     global startAlc
     global uitTimeS
     global uitTimeW
+    global uitTimeJ
     while True:
         # print('loop')
         if startAlc is True:
@@ -212,6 +214,12 @@ def loop_main():
             socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
             time.sleep(1)
 
+        if uitTimeJ>0:
+            uitTimeJ=uitTimeJ-1
+            print(f'JP:{uitTimeJ}')
+            socketio.emit('Sluiting',{'time': uitTimeJ,'id':648955705971})
+            time.sleep(1)
+
 
         if uitTimeS<=0 :
             socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
@@ -223,6 +231,12 @@ def loop_main():
         if uitTimeW<=0:
             socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
             contactor('0','453047185099')
+            time.sleep(1)
+            uitTimeW=0
+
+        if uitTimeJ<=0:
+            socketio.emit('Sluiting',{'time': uitTimeJ,'id':648955705971})
+            contactor('0','648955705971')
             time.sleep(1)
             uitTimeW=0
 
@@ -246,6 +260,8 @@ def MeetAlcohol():
     control=0
     if(id==933210265772):
         control=uitTimeS
+    elif(id==648955705971)
+        control=uitTimeJ
     else:
         control=uitTimeW
 
@@ -341,6 +357,9 @@ def contactor(tijd,id):
             uitTimeS=40
         elif int(id)==453047185099:
             uitTimeW=40
+        elif int(id)==648955705971:
+            uittimeJ=40
+        
         GPIO.output(relais,GPIO.LOW)
         lcd_string("Blocked",LCD_LINE_1)
         lcd_string("For 3h",LCD_LINE_2)
@@ -351,6 +370,8 @@ def contactor(tijd,id):
             uitTimeS=360
         elif int(id)==453047185099:
             uitTimeW=360
+        elif int(id)==648955705971:
+            uittimeJ=360
         GPIO.output(relais,GPIO.LOW)
         lcd_string("Blocked",LCD_LINE_1)
         lcd_string("For 6h",LCD_LINE_2)
@@ -407,7 +428,7 @@ def Shutter():
     time.sleep(2)
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
-    # os.system("sudo shutdown -h now")
+    os.system("sudo shutdown -h now")
 def grafiekdata():
     while True:
         global dataTimer
