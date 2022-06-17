@@ -1,5 +1,6 @@
 from logging import shutdown
 import time
+from typing import Counter
 from RPi import GPIO
 from helpers.klasseknop import Button
 import threading
@@ -28,7 +29,7 @@ stop=18
 
 
 forbidden_list=[]
-dataTimer=60
+dataTimer=0
 temperatuur=0
 alcohol=0
 lock=0
@@ -56,7 +57,7 @@ E_DELAY = 0.0005
 
 bus = smbus.SMBus(1) # Rev 2 Pi uses 1
 
-
+counter=0
 
 def lcd_init():
   lcd_byte(0x33,LCD_CMD) # 110011 Initialise
@@ -100,12 +101,18 @@ def show_ip():
 
 # Callbacks
 def callbackALC(String):
+    global counter
+    counter+=1
+    print(counter)
+
     DeviceID=4
     ActieID=2
     Datum=datetime.now()
     Waarde=float(temperatuur)
     Commentaar='Temperatuursmeting'
     DataRepository.create_log(DeviceID,ActieID,Datum,Waarde,Commentaar)
+    time.sleep(0.05)
+    print(GPIO.input(start))
     global startAlc
     startAlc = not startAlc
     print(startAlc)
@@ -132,8 +139,8 @@ def setup_gpio():
     GPIO.setup(buzzer, GPIO.OUT)
     GPIO.setup(start, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(stop, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(start,GPIO.RISING,callbackALC, bouncetime=600)
-    GPIO.add_event_detect(stop,GPIO.RISING,Shutdown, bouncetime=600)
+    GPIO.add_event_detect(start,GPIO.FALLING,callbackALC, bouncetime=2000)
+    GPIO.add_event_detect(stop,GPIO.FALLING,Shutdown, bouncetime=600)
    
 
 def onewire():
@@ -223,6 +230,7 @@ def MeetAlcohol():
     global startAlc
     global uitTimeW
     global uitTimeS
+    GPIO.remove_event_detect(start)
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
     time.sleep(1)
@@ -248,7 +256,7 @@ def MeetAlcohol():
         lcd_string("Abort",LCD_LINE_1)
         lcd_string(f"Restricted for:{control}",LCD_LINE_2)
         time.sleep(2)
-        startAlc = not startAlc
+        startAlc = False
         show_ip()
     else:
         lcd_string("",LCD_LINE_1)
@@ -261,6 +269,7 @@ def MeetAlcohol():
         time.sleep(1)
         lcd_string("Blow 5 seconds",LCD_LINE_1)
         lcd_string("In the sensor",LCD_LINE_2)
+        
         setup_gpio()
         GPIO.output(buzzer,GPIO.HIGH)
         time.sleep(0.5)
@@ -305,10 +314,9 @@ def MeetAlcohol():
         ADatum=Datum
         AWaarde=Waarde
         DataRepository.create_alc_log(UserID,ADatum,AWaarde)
-        socketio.emit('AlcoholData', {'alcohol': f'{hoogstalcohol}'})
         global temperatuur
         print(f"Resultaat: {hoogstalcohol}mg/l")
-        startAlc = not startAlc
+        startAlc = False
         check_alcohol(hoogstalcohol,id)
 def check_alcohol(percentage,id):
     if percentage >=0.30:      # 400 (limit)/1023*100
@@ -402,19 +410,31 @@ def Shutter():
     # os.system("sudo shutdown -h now")
 def grafiekdata():
     while True:
-        jsontemp=DataRepository.gettemps()
-        jsonalc=DataRepository.getAwaardes()
-        jsondata=DataRepository.getdata()
-        templist=[]
-        alclist=[]
-        # print(jsontemp)
-        for i in range(0,8):
-            templist.append(jsontemp[i]['Waarde'])
-            alclist.append(jsonalc[i]['AWaarde'])
-            time.sleep(0.5)
-        # print(templist)
-        # print(alclist)
-        socketio.emit('Chart', {'temp': templist,'alc': alclist})
+        global dataTimer
+        if dataTimer==60:
+            jsontemp=DataRepository.gettemps()
+            jsonalc=DataRepository.getAwaardes()
+            jsondata=DataRepository.getdata()
+            templist=[]
+            alclist=[]
+            # print(jsontemp)
+            for i in range(0,8):
+                templist.append(jsontemp[i]['Waarde'])
+                alclist.append(jsonalc[i]['AWaarde'])
+                time.sleep(0.5)
+            # print(templist)
+            # print(alclist)
+            socketio.emit('Chart', {'temp': templist,'alc': alclist})
+
+def alcdata():
+    while True:
+        global dataTimer
+        if dataTimer==60:    
+            result=DataRepository.getlatestalc()
+            print(result[0]['AWaarde'])
+            socketio.emit('AlcoholData', {'alcohol': result[0]['AWaarde']})
+        time.sleep(1)
+            
 
 # API ENDPOINTS
 
@@ -525,6 +545,13 @@ def threadgrafiek():
     print("**** Starting graf ****")
     Threadgr = threading.Thread(target=grafiekdata, args=(), daemon=True)
     Threadgr.start()
+
+def alcdatathread():
+    print("**** Starting alcdata ****")
+    Threadalc = threading.Thread(target=alcdata, args=(), daemon=True)
+    Threadalc.start()
+
+
 # ANDERE FUNCTIES
 
 
@@ -547,13 +574,13 @@ if __name__ == '__main__':
             lcd_string("Alco-CarLock",LCD_LINE_2)
             time.sleep(3)
             show_ip()
-            # setup_gpio()
             # start_chrome_thread()
             start_temp_thread()
             start_tempData_thread()
             start_alcohol_thread()
             thread()
             threadgrafiek()
+            alcdatathread()
             print("**** Starting APP ****")
             socketio.run(app, debug=False, host='0.0.0.0',port=5000)
                 

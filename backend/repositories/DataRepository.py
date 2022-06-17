@@ -71,3 +71,7 @@ class DataRepository:
     def getdata():
         sql = 'SELECT Datum FROM Historiek WHERE DeviceID=2 order by Datum desc LIMIT 8;'
         return Database.get_rows(sql)
+    @staticmethod
+    def getlatestalc():
+        sql = 'SELECT AWaarde FROM AlcoholHistoriek  ORDER BY AlcHistoriekID desc LIMIT 1;'
+        return Database.get_rows(sql)
