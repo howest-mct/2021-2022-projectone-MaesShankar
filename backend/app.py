@@ -415,7 +415,7 @@ def Shutdown(String):
     time.sleep(2)
     lcd_string("",LCD_LINE_1)
     lcd_string("",LCD_LINE_2)
-    # os.system("sudo shutdown -h now")
+    os.system("sudo shutdown -h now")
 
 def Shutter():
     DeviceID=5
