@@ -45,10 +45,14 @@ const getUsers = function () {
 const ShowAlcohol = function (alcohol) {
   document.querySelector('.js-alcohol').innerHTML = `<p class="c-temperatuur js-alcoholpercentage">${alcohol}mg/l</p>`
 }
+
+// Temperature Javascript function
 const ShowTemperatuur = function (temperatuur) {
   // console.log(temperatuur)
   document.querySelector('.js-temperatuur').innerHTML = `<p class="c-temperatuur js-temperatuur">${temperatuur}°C</p>`
 }
+
+
 const showSluiting = function (locktime, id) {
   let htmlid = ``
   if (id == 933210265772) {
@@ -196,15 +200,18 @@ const listenToSocket = function () {
 
 };
 
-
+// Listen to the socketio
 const listenToTempSocket = function () {
+  // Get temp by connect
   socketio.on('B2F_connected', function (parameter) {
     console.log(`Het is ${parameter.temperatuur} °C`);
     ShowTemperatuur(parameter.temperatuur)
   });
+  // To get temp by thread
   socketio.on('TempData', function (parameter) {
     ShowTemperatuur(parameter.temperatuur)
   });
+  // Get alcohol data by thread
   socketio.on('AlcoholData', function (parameter) {
     console.log(parameter.alcohol)
     ShowAlcohol(parameter.alcohol)

@@ -92,6 +92,7 @@ def lcd_string(message,line):
   lcd_byte(line, LCD_CMD)
   for i in range(LCD_WIDTH):
     lcd_byte(ord(message[i]),LCD_CHR)
+
 def show_ip():
     global ip
     lcd_string("",LCD_LINE_1)
@@ -159,6 +160,8 @@ def onewire():
         temperatuur=data
         # print(f"temperatuur:{data}")
         time.sleep(0.5)
+
+
 def MeetAlcData():
     while True:
         klasse=MCPclass()
@@ -248,7 +251,8 @@ def MeetAlcohol(idweb=0):
     global startAlc
     global uitTimeW
     global uitTimeS
-    if(idweb):
+    # This is for the web buttons
+    if(idweb): 
         id=int(idweb)
         print(id)
     else:
@@ -266,6 +270,7 @@ def MeetAlcohol(idweb=0):
     dict_forbidden=list_forbidden[0]
     toegang=dict_forbidden['Toegang']
     print(toegang,id)
+    # Is there aa timer running for the user
     control=0
     if(id==933210265772):
         control=uitTimeS
@@ -570,10 +575,12 @@ def start_tempData_thread():
     print("**** Starting TEMPData ****")
     ThreadData = threading.Thread(target=dataTemp, args=(), daemon=True)
     ThreadData.start()
+
 def start_alcohol_thread():
     print("**** Starting ALC ****")
     ThreadAlc = threading.Thread(target=MeetAlcData, args=(), daemon=True)
     ThreadAlc.start()
+
 def thread():
     print("**** Starting Loop ****")
     Threads = threading.Thread(target=loop_main, args=(), daemon=True)
