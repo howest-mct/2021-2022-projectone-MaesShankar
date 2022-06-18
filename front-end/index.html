@@ -30,6 +30,15 @@
                                 Alco-CarLock
                             </a>
                         </h1>
+
+
+                    </div>
+                    <div class="c-header__mobile-nav-trigger">
+                        <button class="o-button-reset c-nav-trigger js-toggle-nav">
+                            <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
@@ -51,13 +60,7 @@
                     </nav>
                 </div>
 
-                <div class="c-header__mobile-nav-trigger">
-                    <button class="o-button-reset c-nav-trigger js-toggle-nav">
-                        <svg class="c-nav-trigger__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-                        </svg>
-                    </button>
-                </div>
+
             </div>
         </header>
         <section class="o-row o-row--md u-max-width-page">
@@ -166,7 +169,8 @@
                                 </svg>
                                 <h3>
                                     <span class="c-temperatuur">Current Closing</span>
-                                    <div class="js-sluiting c-temperatuur">Open</div>
+                                    <div class="js-sluiting c-temperatuur">--:--</div>
+                                    <div class="c-temperatuur">min</div>
                                 </h3>
                             </div>
                             <p class="js-idsluit c-temperatuur-sm "></p>
@@ -239,7 +243,8 @@
         <section class="o-row o-row--md u-max-width-md">
             <div>
                 <h3 class="js-name u-color--dark">Alcohol Consumption and Temperature Chart</h3>
-                <p class="u-text">Underneath U will find the latest 8 records of the temperature and the alcohol consumption</p>
+                <p class="u-text">Underneath U will find the latest 8 records of the temperature and the alcohol
+                    consumption</p>
             </div>
             <div class="js-chart" id="chart">
             </div>

@@ -12,11 +12,19 @@ def read_spi(channel):
   return ((spidata[1] & 3) << 8) + spidata[2]
 
 try:
-  while True:
-    channeldata = read_spi(1)
-    channeldata=(channeldata/1023)*100
-    print("Waarde POT = {}".format(round(channeldata,2)))
-    time.sleep(2)
+    while True:
+
+        data=read_spi(1)
+        alcohol=round((data/1024)*3.3,2) 
+        RS_gas = ((5.0 * 2000)/alcohol) - 2000
+        R0 = 16000
+        ratio = RS_gas/R0 # ratio = RS/R0
+        x = 0.4*ratio   
+        global BAC
+        BAC = pow(x,-1.431)/20  #BAC in mg/L
+        print(f"alcohol:{round(BAC,2)}")
+        time.sleep(1)
+
     
  
 except KeyboardInterrupt:

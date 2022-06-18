@@ -158,7 +158,7 @@ def onewire():
         global temperatuur
         temperatuur=data
         # print(f"temperatuur:{data}")
-        time.sleep(1)
+        time.sleep(0.5)
 def MeetAlcData():
     while True:
         klasse=MCPclass()
@@ -202,56 +202,65 @@ def loop_main():
         # print('loop')
         if startAlc is True:
             MeetAlcohol()
+
         if uitTimeS>0:
             uitTimeS=uitTimeS-1
-            print(f's:{uitTimeS}')
-            socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
-            time.sleep(1)
-
+            # print(f's:{uitTimeS}')
+            
+        # time.sleep(0.5)
         if uitTimeW>0:
             uitTimeW=uitTimeW-1
-            print(f'w:{uitTimeW}')
-            socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
-            time.sleep(1)
+            # print(f'w:{uitTimeW}')
+            # time.sleep(1)
 
+        # time.sleep(0.5)
         if uitTimeJ>0:
             uitTimeJ=uitTimeJ-1
-            print(f'JP:{uitTimeJ}')
-            socketio.emit('Sluiting',{'time': uitTimeJ,'id':648955705971})
-            time.sleep(1)
+            # print(f'JP:{uitTimeJ}')
+            # time.sleep(1)
 
 
         if uitTimeS<=0 :
-            socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
-            contactor('0','933210265772')
-            time.sleep(1)
             uitTimeS=0
+            contactor('0','933210265772')
+            # time.sleep(1)
 
             
         if uitTimeW<=0:
-            socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
-            contactor('0','453047185099')
-            time.sleep(1)
             uitTimeW=0
+            # print(f'{uitTimeW}:W')
+            contactor('0','453047185099')
+            # time.sleep(1)
 
         if uitTimeJ<=0:
-            socketio.emit('Sluiting',{'time': uitTimeJ,'id':648955705971})
+            uitTimeJ=0
             contactor('0','648955705971')
-            time.sleep(1)
-            uitTimeW=0
+            # time.sleep(1)
 
-def MeetAlcohol():
+        socketio.emit('Sluiting',{'time': uitTimeW,'id':453047185099})
+        time.sleep(1)
+        socketio.emit('Sluiting',{'time': uitTimeS,'id':933210265772})
+        time.sleep(1)
+        socketio.emit('Sluiting',{'time': uitTimeJ,'id':648955705971})
+        time.sleep(1)
+
+def MeetAlcohol(idweb=0):
     global startAlc
     global uitTimeW
     global uitTimeS
-    GPIO.remove_event_detect(start)
-    lcd_string("",LCD_LINE_1)
-    lcd_string("",LCD_LINE_2)
-    time.sleep(1)
-    lcd_string("Scan Badge",LCD_LINE_1)
-    lcd_string("",LCD_LINE_2)
-    time.sleep(3)
-    id=rfid()
+    if(idweb):
+        id=int(idweb)
+        print(id)
+    else:
+        GPIO.remove_event_detect(start)
+        lcd_string("",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(1)
+        lcd_string("Scan Badge",LCD_LINE_1)
+        lcd_string("",LCD_LINE_2)
+        time.sleep(3)
+        id=rfid()
+        setup_gpio()
     # naam='shankar'
     list_forbidden=DataRepository.read_toegang(id)
     dict_forbidden=list_forbidden[0]
@@ -262,15 +271,15 @@ def MeetAlcohol():
         control=uitTimeS
     elif(id==648955705971):
         control=uitTimeJ
-    else:
+    elif(id==453047185099):
         control=uitTimeW
 
     if control > 0:
         lcd_string("",LCD_LINE_1)
         lcd_string("",LCD_LINE_2)
         time.sleep(1)
-        lcd_string("Abort",LCD_LINE_1)
-        lcd_string(f"Restricted for:{control}",LCD_LINE_2)
+        lcd_string("Aborting",LCD_LINE_1)
+        lcd_string(f"Restricted for:{control}s",LCD_LINE_2)
         time.sleep(2)
         startAlc = False
         show_ip()
@@ -286,7 +295,6 @@ def MeetAlcohol():
         lcd_string("Blow 5 seconds",LCD_LINE_1)
         lcd_string("In the sensor",LCD_LINE_2)
         
-        setup_gpio()
         GPIO.output(buzzer,GPIO.HIGH)
         time.sleep(0.5)
         GPIO.output(buzzer,GPIO.LOW)
@@ -334,8 +342,9 @@ def MeetAlcohol():
         print(f"Resultaat: {hoogstalcohol}mg/l")
         startAlc = False
         check_alcohol(hoogstalcohol,id)
+
 def check_alcohol(percentage,id):
-    if percentage >=0.30:      
+    if percentage >=0.30 and percentage <=0.40:      
         DataRepository.update_toegang('0',id)
         contactor('3',id)
     elif percentage>=0.40:
@@ -346,35 +355,41 @@ def check_alcohol(percentage,id):
         contactor('0',id)
 
 def contactor(tijd,id):
-    global uitTimeS 
+    global uitTimeS
     global uitTimeW
-    global uittimeJ
+    global uitTimeJ
     # setup_gpio()
     list_forbidden=DataRepository.read_toegang(id)
     dict_forbidden=list_forbidden[0]
     toegang=dict_forbidden['Toegang']
     if str(tijd) == '3':
         if int(id)==933210265772:
-            uitTimeS=40
+            uitTimeS=120
+            naam='Shankar'
         elif int(id)==453047185099:
-            uitTimeW=40
+            uitTimeW=120
+            naam='Willy'
         elif int(id)==648955705971:
-            uittimeJ=40
+            uitTimeJ=120
+            naam ='JP'
         
         GPIO.output(relais,GPIO.LOW)
-        lcd_string("Blocked",LCD_LINE_1)
+        lcd_string(f"{naam} Blocked",LCD_LINE_1)
         lcd_string("For 3h",LCD_LINE_2)
         time.sleep(2)
         show_ip()
     elif str(tijd) == '6':
         if int(id)==933210265772:
-            uitTimeS=360
+            uitTimeS=240
+            naam='Shankar'
         elif int(id)==453047185099:
-            uitTimeW=360
+            uitTimeW=240
+            naam='Willy'
         elif int(id)==648955705971:
-            uittimeJ=360
+            uitTimeJ=240
+            naam='JP'
         GPIO.output(relais,GPIO.LOW)
-        lcd_string("Blocked",LCD_LINE_1)
+        lcd_string(f"{naam} Blocked",LCD_LINE_1)
         lcd_string("For 6h",LCD_LINE_2)
         time.sleep(2)
         show_ip()
@@ -498,13 +513,13 @@ def initial_connection():
 def LockTime(time,id):
     if time=='3':
         print(f'tijd {time} id={id}')
-        check_alcohol(50,id)
+        check_alcohol(0.35,id)
     elif time=='6':
         print(f'tijd {time} id={id}')
-        check_alcohol(71,id)
+        check_alcohol(0.45,id)
     elif time=='0':
         print(f'tijd {time} id={id}')
-        check_alcohol(0,id)
+        MeetAlcohol(id)
 @socketio.on('F2B_shutdown')
 def shutter():
         print('Shutdown')
@@ -587,7 +602,8 @@ if __name__ == '__main__':
         lcd_string("Loading...",LCD_LINE_2)
         while len(ip)< 7 and ip[0:1] != 1:
             ipfull=str(check_output(['ip','a']))
-            min=int(ipfull.find('172.30.252'))
+            # min=int(ipfull.find('172.30.252'))
+            min=int(ipfull.find('192.168.0.'))
             ip=str(ipfull[min:min +13])
             # print(ip)
             time.sleep(2)

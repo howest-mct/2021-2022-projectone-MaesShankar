@@ -58,9 +58,10 @@ const showSluiting = function (locktime, id) {
   } else {
     htmlid = `JP`
   }
-
+  let minutes= Math.floor(locktime/60)
+  let seconds=locktime%60
   let htmlSluit = ``
-  htmlSluit = `<p class="c-temperatuur js-sluiting">${locktime} s</p>`
+  htmlSluit = `<p class="c-temperatuur js-sluiting">${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</p>`
   document.querySelector('.js-sluiting').innerHTML = htmlSluit
   document.querySelector('.js-idsluit').innerHTML = htmlid
 }
