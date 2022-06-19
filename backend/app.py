@@ -473,7 +473,7 @@ def alcdata():
         global dataTimer
         if dataTimer==60:    
             result=DataRepository.getlatestalc()
-            print(result[0]['AWaarde'])
+            # print(result[0]['AWaarde'])
             socketio.emit('AlcoholData', {'alcohol': result[0]['AWaarde']})
         time.sleep(1)
             
@@ -609,8 +609,8 @@ if __name__ == '__main__':
         lcd_string("Loading...",LCD_LINE_2)
         while len(ip)< 7 and ip[0:1] != 1:
             ipfull=str(check_output(['ip','a']))
-            # min=int(ipfull.find('172.30.252'))
-            min=int(ipfull.find('192.168.0.'))
+            min=int(ipfull.find('172.30.252'))
+            # min=int(ipfull.find('192.168.0.'))
             ip=str(ipfull[min:min +13])
             # print(ip)
             time.sleep(2)
