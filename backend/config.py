@@ -1,8 +1,8 @@
 [connector_python]
-user = student
+user = ''
 host = 127.0.0.1
 port = 3306
-password = W8w00rd
+password = ''
 database = ProjectDB
 
 [application_config]
