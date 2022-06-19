@@ -45,22 +45,10 @@ For the alcohol database I need a UserID. But that I only can determine if I hav
 I used a library to read my RFID. But before we can read we have to write first. So the first program I will run the riting programming and will hold the badge against the RFID. I have to insert a name. Now there is an ID and a name configured in the RFID. So if we test the reading program we will see that it will work.
 
 Next up: connecting the RFID to the gas sensor. So before I will test for alcohol I will ask to scan the badge. If the scan is alright, I will tell the user and then He can blow. With
+### 
 
 ## Instructables
-Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
+https://www.instructables.com/Project-One-Alcohol-Lock/
 
 
 
-# Voor mezelf om te onthouden:
-Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
-
-- Wat is de structuur van het project?
-- Wat moet er gebeuren met de database? Hoe krijgt de persoon dit up and running?
-- Moeten er settings worden veranderd in de backend code voor de database? 
-- Runt de back- en front-end code direct? Of moeten er nog commando's worden ingegeven?
-- Zijn er poorten die extra aandacht vereisen in de back- en/of front-end code?
-Op github vind je verschillende voorbeelden hoe je een readme.md bestand kan structureren.
-- [Voorbeeld 1](https://github.com/othneildrew/Best-README-Template)
-- [Voorbeeld 2](https://github.com/tsungtwu/flask-example/blob/master/README.md)
-- [Voorbeeld 3](https://github.com/twbs/bootstrap/blob/main/README.md)
-- [Voorbeeld 4](https://www.makeareadme.com/)
